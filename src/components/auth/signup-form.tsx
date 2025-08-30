@@ -47,7 +47,7 @@ export function SignupForm() {
     //     title: "Check your email",
     //     description: "We sent you a confirmation link. After confirming, come back and sign in.",
     //   })
-      router.push(`/login`)
+      router.push(`/auth/login`)
     } catch (err: any) {
         alert("Error Occured");
     //   toast({
