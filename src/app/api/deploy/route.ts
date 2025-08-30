@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { VercelDeploymentService, MockDeploymentService } from '@/lib/deployment/vercel';
-import { AICodeGenerator } from '@/lib/ai/codeGenerator';
 
 // Helper function to check if Supabase is configured
 function isSupabaseConfigured() {

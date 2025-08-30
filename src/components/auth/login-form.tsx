@@ -1,22 +1,19 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 
 import * as React from "react"
 import Link from "next/link"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useRouter } from "next/navigation"
 // import { useToast } from "@/hooks/use-toast"
 import { createClient } from "@/lib/supabase/client"
 
 export function LoginForm() {
   const router = useRouter()
-  const search = useSearchParams()
 //   const { toast } = useToast()
 
   const [email, setEmail] = React.useState("")
   const [password, setPassword] = React.useState("")
   const [loading, setLoading] = React.useState(false)
 
-  const redirectTo = React.useMemo(() => search.get("redirect") || "/", [search])
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -35,13 +32,13 @@ export function LoginForm() {
       }
       alert("Signed In");
     //   toast({ title: "Signed in", description: "Welcome back!" })
-      router.push(redirectTo)
+      router.push("/dashboard")
       router.refresh()
-    } catch (err: any) {
+    } catch {
         alert("Error Occured");
     //   toast({
     //     title: "Configuration error",
-    //     description: err?.message || "Supabase is not configured yet.",
+    //     description: "Supabase is not configured yet.",
     //     variant: "destructive",
     //   })
     } finally {

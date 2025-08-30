@@ -46,8 +46,8 @@ export interface Component {
   user_id: string | null;
   name: string;
   type: ComponentType;
-  props: Record<string, any>;
-  styles: Record<string, any>;
+  props: Record<string, unknown>;
+  styles: Record<string, unknown>;
   code: string;
   preview_image: string | null;
   is_public: boolean;
@@ -65,7 +65,7 @@ export interface ProjectComponent {
   width: number;
   height: number;
   z_index: number;
-  custom_props: Record<string, any>;
+  custom_props: Record<string, unknown>;
   created_at: string;
 }
 
@@ -75,8 +75,8 @@ export interface AIGeneration {
   user_id: string;
   prompt: string;
   generation_type: 'frontend' | 'backend' | 'component' | 'full_stack';
-  input_data: Record<string, any>;
-  output_data: Record<string, any>;
+  input_data: Record<string, unknown>;
+  output_data: Record<string, unknown>;
   generated_code: string | null;
   status: 'processing' | 'completed' | 'failed';
   error_message: string | null;
@@ -91,7 +91,7 @@ export interface Deployment {
   deployment_url: string | null;
   status: 'pending' | 'building' | 'success' | 'failed';
   build_logs: string | null;
-  environment_variables: Record<string, any>;
+  environment_variables: Record<string, unknown>;
   created_at: string;
   updated_at: string;
 }
@@ -108,8 +108,8 @@ export interface CanvasElement {
     width: number;
     height: number;
   };
-  props: Record<string, any>;
-  styles: Record<string, any>;
+  props: Record<string, unknown>;
+  styles: Record<string, unknown>;
   children?: CanvasElement[];
   parent_id?: string;
 }
@@ -151,7 +151,7 @@ export interface DatabaseColumn {
   name: string;
   type: string;
   nullable: boolean;
-  default_value?: any;
+  default_value?: unknown;
   is_primary_key?: boolean;
   is_foreign_key?: boolean;
   references?: {
@@ -173,7 +173,7 @@ export interface APIEndpoint {
   method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
   description: string;
   parameters?: APIParameter[];
-  response_schema?: Record<string, any>;
+  response_schema?: Record<string, unknown>;
   requires_auth?: boolean;
 }
 
@@ -182,7 +182,7 @@ export interface APIParameter {
   type: string;
   required: boolean;
   description?: string;
-  validation?: Record<string, any>;
+  validation?: Record<string, unknown>;
 }
 
 export interface AuthConfig {
@@ -219,7 +219,7 @@ export interface DragDropItem {
   type: ComponentType;
   name: string;
   icon: string;
-  defaultProps: Record<string, any>;
+  defaultProps: Record<string, unknown>;
   category: 'layout' | 'content' | 'form' | 'navigation' | 'media';
 }
 

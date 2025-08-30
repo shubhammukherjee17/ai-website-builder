@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/client';
 import { createClient as createServerClient } from '@/lib/supabase/server';
+import { CanvasElement } from '@/types';
 
 export interface Project {
   id: string;
@@ -7,29 +8,29 @@ export interface Project {
   description?: string;
   status: 'draft' | 'building' | 'deployed' | 'failed';
   user_id: string;
-  elements?: any[];
+  elements?: CanvasElement[];
   created_at: string;
   updated_at: string;
   deployment_url?: string;
   preview_url?: string;
-  metadata?: any;
+  metadata?: Record<string, unknown>;
 }
 
 export interface CreateProjectData {
   title: string;
   description?: string;
-  elements?: any[];
-  metadata?: any;
+  elements?: CanvasElement[];
+  metadata?: Record<string, unknown>;
 }
 
 export interface UpdateProjectData {
   title?: string;
   description?: string;
   status?: 'draft' | 'building' | 'deployed' | 'failed';
-  elements?: any[];
+  elements?: CanvasElement[];
   deployment_url?: string;
   preview_url?: string;
-  metadata?: any;
+  metadata?: Record<string, unknown>;
 }
 
 // Client-side database operations
@@ -154,7 +155,7 @@ export class ProjectsClient {
     }
   }
 
-  async saveProjectElements(id: string, elements: any[]): Promise<boolean> {
+  async saveProjectElements(id: string, elements: CanvasElement[]): Promise<boolean> {
     try {
       const { error } = await this.supabase
         .from('projects')
@@ -202,7 +203,7 @@ export class ProjectsClient {
 
 // Server-side database operations
 export class ProjectsServer {
-  private supabase: any;
+  private supabase: Awaited<ReturnType<typeof createServerClient>> | null = null;
 
   constructor() {
     // Will be initialized when first method is called

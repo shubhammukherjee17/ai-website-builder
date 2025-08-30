@@ -3,22 +3,19 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { MessageSquare, Send, X, Minimize2, Maximize2, Loader } from 'lucide-react';
-import { ChatMessage, ChatContext, CanvasElement } from '@/types';
+import { ChatMessage, ChatContext } from '@/types';
 
 interface AIAssistantProps {
   isOpen: boolean;
   onToggle: () => void;
   context?: ChatContext;
   onCodeGenerate?: (prompt: string) => void;
-  onElementUpdate?: (elementId: string, updates: any) => void;
 }
 
 export default function AIAssistant({
   isOpen,
   onToggle,
-  context,
-  onCodeGenerate,
-  onElementUpdate
+  onCodeGenerate
 }: AIAssistantProps) {
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
@@ -60,7 +57,7 @@ export default function AIAssistant({
 
     try {
       // Process the user's request
-      const response = await processAIRequest(inputMessage, context);
+      const response = await processAIRequest(inputMessage);
       
       const assistantMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
@@ -76,7 +73,7 @@ export default function AIAssistant({
         await executeAction(response.action, response.actionData);
       }
 
-    } catch (error) {
+    } catch {
       const errorMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
@@ -89,7 +86,7 @@ export default function AIAssistant({
     }
   };
 
-  const processAIRequest = async (message: string, context?: ChatContext) => {
+  const processAIRequest = async (message: string) => {
     // This is a simplified AI processing function
     // In a real implementation, this would call an AI API like OpenAI or Claude
 

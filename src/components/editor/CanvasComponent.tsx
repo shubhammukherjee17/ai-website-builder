@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Trash2, Move, Copy, RotateCcw } from 'lucide-react';
-import { CanvasElement, ComponentType } from '@/types';
+import Image from 'next/image';
+import { CanvasElement } from '@/types';
 
 interface CanvasComponentProps {
   element: CanvasElement;
@@ -25,7 +26,6 @@ export default function CanvasComponent({
   onUpdate,
   onDelete
 }: CanvasComponentProps) {
-  const elementRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
@@ -92,7 +92,7 @@ export default function CanvasComponent({
 
     document.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('mouseup', handleMouseUp);
-  }, [element.position.x, element.position.y, isDragging, dragStart, onUpdate, onSelect, interactionMode]);
+  }, [element.position.x, element.position.y, isDragging, dragStart, onUpdate, onSelect, interactionMode, isPreviewMode]);
 
   const handleResizeStart = useCallback((e: React.MouseEvent, handle: ResizeHandle) => {
     if (isPreviewMode) return;
@@ -112,8 +112,8 @@ export default function CanvasComponent({
       const deltaX = e.clientX - startX;
       const deltaY = e.clientY - startY;
       
-      let newPosition = { ...startPosition };
-      let newSize = { ...startSize };
+      const newPosition = { ...startPosition };
+      const newSize = { ...startSize };
       
       switch (handle) {
         case 'nw':
@@ -166,26 +166,28 @@ export default function CanvasComponent({
 
     document.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('mouseup', handleMouseUp);
-  }, [element.position, element.size, isResizing, onUpdate]);
+  }, [element.position, element.size, isResizing, onUpdate, isPreviewMode]);
 
   const renderComponent = () => {
     switch (element.type) {
       case 'text':
         return (
           <div 
-            className={element.props?.className || 'text-gray-900 p-2'}
+            className={(element.props?.className as string) || 'text-gray-900 p-2'}
             style={element.styles}
           >
-            {element.props?.children || element.props?.text || 'Text'}
+            {(element.props?.children as string) || (element.props?.text as string) || 'Text'}
           </div>
         );
 
       case 'image':
         return (
-          <img
-            src={element.props?.src || 'https://via.placeholder.com/300x200'}
-            alt={element.props?.alt || 'Image'}
-            className={element.props?.className || 'rounded-lg object-cover'}
+          <Image
+            src={(element.props?.src as string) || 'https://via.placeholder.com/300x200'}
+            alt={(element.props?.alt as string) || 'Image'}
+            width={element.size.width}
+            height={element.size.height}
+            className={(element.props?.className as string) || 'rounded-lg object-cover'}
             style={{
               width: '100%',
               height: '100%',
@@ -197,20 +199,20 @@ export default function CanvasComponent({
       case 'button':
         return (
           <button
-            className={element.props?.className || 'px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors'}
+            className={(element.props?.className as string) || 'px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors'}
             style={element.styles}
-            onClick={isPreviewMode ? element.props?.onClick : undefined}
+            onClick={isPreviewMode ? (element.props?.onClick as () => void) : undefined}
           >
-            {element.props?.children || element.props?.text || 'Button'}
+            {(element.props?.children as string) || (element.props?.text as string) || 'Button'}
           </button>
         );
 
       case 'input':
         return (
           <input
-            type={element.props?.type || 'text'}
-            placeholder={element.props?.placeholder || 'Enter text...'}
-            className={element.props?.className || 'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500'}
+            type={(element.props?.type as string) || 'text'}
+            placeholder={(element.props?.placeholder as string) || 'Enter text...'}
+            className={(element.props?.className as string) || 'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500'}
             style={element.styles}
           />
         );
@@ -218,54 +220,54 @@ export default function CanvasComponent({
       case 'container':
         return (
           <div
-            className={element.props?.className || 'p-4 bg-gray-50 border border-gray-200 rounded-lg'}
+            className={(element.props?.className as string) || 'p-4 bg-gray-50 border border-gray-200 rounded-lg'}
             style={element.styles}
           >
-            {element.props?.children || 'Container'}
+            {(element.props?.children as string) || 'Container'}
           </div>
         );
 
       case 'header':
         return (
           <header
-            className={element.props?.className || 'w-full py-4 px-6 bg-white border-b border-gray-200'}
+            className={(element.props?.className as string) || 'w-full py-4 px-6 bg-white border-b border-gray-200'}
             style={element.styles}
           >
-            {element.props?.children || 'Header'}
+            {(element.props?.children as string) || 'Header'}
           </header>
         );
 
       case 'footer':
         return (
           <footer
-            className={element.props?.className || 'w-full py-8 px-6 bg-gray-900 text-white'}
+            className={(element.props?.className as string) || 'w-full py-8 px-6 bg-gray-900 text-white'}
             style={element.styles}
           >
-            {element.props?.children || 'Footer'}
+            {(element.props?.children as string) || 'Footer'}
           </footer>
         );
 
       case 'navbar':
         return (
           <nav
-            className={element.props?.className || 'w-full py-4 px-6 bg-gray-900 text-white'}
+            className={(element.props?.className as string) || 'w-full py-4 px-6 bg-gray-900 text-white'}
             style={element.styles}
           >
-            {element.props?.children || 'Navigation Bar'}
+            {(element.props?.children as string) || 'Navigation Bar'}
           </nav>
         );
 
       case 'hero':
         return (
           <div
-            className={element.props?.className || 'text-center py-20 bg-gray-50'}
+            className={(element.props?.className as string) || 'text-center py-20 bg-gray-50'}
             style={element.styles}
           >
             <h1 className="text-4xl font-bold text-gray-900 mb-4">
-              {element.props?.title || 'Hero Title'}
+              {(element.props?.title as string) || 'Hero Title'}
             </h1>
             <p className="text-xl text-gray-600">
-              {element.props?.subtitle || 'Hero subtitle goes here'}
+              {(element.props?.subtitle as string) || 'Hero subtitle goes here'}
             </p>
           </div>
         );
@@ -273,14 +275,14 @@ export default function CanvasComponent({
       case 'card':
         return (
           <div
-            className={element.props?.className || 'p-6 bg-white border border-gray-200 rounded-lg shadow-sm'}
+            className={(element.props?.className as string) || 'p-6 bg-white border border-gray-200 rounded-lg shadow-sm'}
             style={element.styles}
           >
             <h3 className="text-lg font-semibold text-gray-900 mb-2">
-              {element.props?.title || 'Card Title'}
+              {(element.props?.title as string) || 'Card Title'}
             </h3>
             <p className="text-gray-600">
-              {element.props?.content || 'Card content goes here'}
+              {(element.props?.content as string) || 'Card content goes here'}
             </p>
           </div>
         );
@@ -288,7 +290,7 @@ export default function CanvasComponent({
       case 'form':
         return (
           <form
-            className={element.props?.className || 'space-y-4 p-6 bg-white border border-gray-200 rounded-lg'}
+            className={(element.props?.className as string) || 'space-y-4 p-6 bg-white border border-gray-200 rounded-lg'}
             style={element.styles}
           >
             <div>
@@ -321,7 +323,7 @@ export default function CanvasComponent({
       case 'grid':
         return (
           <div
-            className={element.props?.className || 'grid grid-cols-2 gap-4 p-4 border border-gray-200 rounded-lg'}
+            className={(element.props?.className as string) || 'grid grid-cols-2 gap-4 p-4 border border-gray-200 rounded-lg'}
             style={element.styles}
           >
             <div className="bg-gray-100 p-4 rounded text-center">Grid Item 1</div>
@@ -334,7 +336,7 @@ export default function CanvasComponent({
       case 'flex':
         return (
           <div
-            className={element.props?.className || 'flex items-center justify-center p-4 border border-gray-200 rounded-lg space-x-4'}
+            className={(element.props?.className as string) || 'flex items-center justify-center p-4 border border-gray-200 rounded-lg space-x-4'}
             style={element.styles}
           >
             <div className="bg-gray-100 p-4 rounded">Flex Item 1</div>
@@ -364,7 +366,6 @@ export default function CanvasComponent({
 
   return (
     <div
-      ref={elementRef}
       className={`
         absolute group select-none transition-all duration-200
         ${isSelected && !isPreviewMode ? 

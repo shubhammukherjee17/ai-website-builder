@@ -51,7 +51,7 @@ export default function Navigation({ showAuthButtons = true }: NavigationProps) 
       );
 
       return () => subscription.unsubscribe();
-    } catch (error) {
+    } catch {
       console.warn('Supabase not configured, navigation will show login buttons');
       setSupabaseConfigured(false);
       setIsLoading(false);
@@ -78,8 +78,8 @@ export default function Navigation({ showAuthButtons = true }: NavigationProps) 
       await supabase.auth.signOut();
       setIsProfileOpen(false);
       router.push('/');
-    } catch (error) {
-      console.error('Error signing out:', error);
+    } catch {
+      console.error('Error signing out');
     }
   };
 

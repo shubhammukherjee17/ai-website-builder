@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { Plus, Edit, Eye, Trash2, Calendar, Globe, Filter, Search } from 'lucide-react';
 import { Project } from '@/lib/database/projects';
 import { createClient } from '@/lib/supabase/client';
 import Navigation from '@/components/layout/Navigation';
 import CodePreviewModal from '@/components/modals/CodePreviewModal';
-import { CanvasElement } from '@/types';
+import { CanvasElement, ComponentType } from '@/types';
 
 type ProjectStatus = 'draft' | 'building' | 'deployed' | 'failed';
 type SortBy = 'latest' | 'name' | 'status';
@@ -41,7 +41,7 @@ export default function Dashboard() {
   }, []);
 
   // Filter and sort projects
-  const applyFiltersAndSort = () => {
+  const applyFiltersAndSort = useCallback(() => {
     let filtered = [...projects];
 
     // Apply status filter
@@ -72,19 +72,9 @@ export default function Dashboard() {
     });
 
     setFilteredProjects(filtered);
-  };
-
-  // Fetch projects on component mount
-  useEffect(() => {
-    fetchProjects();
-  }, []);
-
-  // Apply filters whenever dependencies change
-  useEffect(() => {
-    applyFiltersAndSort();
   }, [projects, statusFilter, sortBy, searchQuery]);
 
-  const fetchProjects = async () => {
+  const fetchProjects = useCallback(async () => {
     try {
       setIsLoading(true);
       setError(null);
@@ -106,7 +96,7 @@ export default function Dashboard() {
             elements: [
               {
                 id: 'hero-1',
-                type: 'hero',
+                type: 'hero' as ComponentType,
                 position: { x: 50, y: 50 },
                 size: { width: 700, height: 300 },
                 props: { title: 'Welcome to Our Startup', subtitle: 'Building amazing products for the future' },
@@ -114,7 +104,7 @@ export default function Dashboard() {
               },
               {
                 id: 'text-1',
-                type: 'text',
+                type: 'text' as ComponentType,
                 position: { x: 50, y: 400 },
                 size: { width: 600, height: 100 },
                 props: { children: 'This is a demo landing page showcasing our website builder capabilities.' },
@@ -136,7 +126,7 @@ export default function Dashboard() {
             elements: [
               {
                 id: 'header-1',
-                type: 'header',
+                type: 'header' as ComponentType,
                 position: { x: 50, y: 50 },
                 size: { width: 700, height: 80 },
                 props: { title: 'My Portfolio' },
@@ -144,7 +134,7 @@ export default function Dashboard() {
               },
               {
                 id: 'card-1',
-                type: 'card',
+                type: 'card' as ComponentType,
                 position: { x: 50, y: 150 },
                 size: { width: 300, height: 200 },
                 props: { title: 'Project 1', content: 'A beautiful web application built with modern technologies.' },
@@ -152,7 +142,7 @@ export default function Dashboard() {
               },
               {
                 id: 'card-2',
-                type: 'card',
+                type: 'card' as ComponentType,
                 position: { x: 400, y: 150 },
                 size: { width: 300, height: 200 },
                 props: { title: 'Project 2', content: 'Mobile-first responsive design for optimal user experience.' },
@@ -174,7 +164,7 @@ export default function Dashboard() {
             elements: [
               {
                 id: 'navbar-1',
-                type: 'navbar',
+                type: 'navbar' as ComponentType,
                 position: { x: 50, y: 50 },
                 size: { width: 700, height: 60 },
                 props: {},
@@ -182,7 +172,7 @@ export default function Dashboard() {
               },
               {
                 id: 'hero-2',
-                type: 'hero',
+                type: 'hero' as ComponentType,
                 position: { x: 50, y: 130 },
                 size: { width: 700, height: 250 },
                 props: { title: 'Shop Our Products', subtitle: 'Discover amazing items at great prices' },
@@ -190,7 +180,7 @@ export default function Dashboard() {
               },
               {
                 id: 'grid-1',
-                type: 'grid',
+                type: 'grid' as ComponentType,
                 position: { x: 50, y: 400 },
                 size: { width: 700, height: 300 },
                 props: {},
@@ -234,7 +224,17 @@ export default function Dashboard() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [supabaseConfigured]);
+
+  // Fetch projects on component mount
+  useEffect(() => {
+    fetchProjects();
+  }, [fetchProjects]);
+
+  // Apply filters whenever dependencies change
+  useEffect(() => {
+    applyFiltersAndSort();
+  }, [applyFiltersAndSort]);
 
   const handleDeleteProject = async (projectId: string) => {
     if (window.confirm('Are you sure you want to delete this project?')) {

@@ -37,7 +37,7 @@ export class AICodeGenerator {
     }
   }
 
-  async generateBackendAPI(description: string, databaseSchema?: any): Promise<GeneratedCode> {
+  async generateBackendAPI(): Promise<GeneratedCode> {
     // Template for Next.js API routes
     const apiCode = `
 // Generated API Route
@@ -275,9 +275,9 @@ ${indent}</div>`;
     }
   }
 
-  private stylesToReactProps(styles: Record<string, any>): string {
+  private stylesToReactProps(styles: Record<string, unknown>): string {
     const styleEntries = Object.entries(styles)
-      .filter(([_, value]) => value !== undefined && value !== null && value !== '')
+      .filter(([, value]) => value !== undefined && value !== null && value !== '')
       .map(([key, value]) => `${key}: '${value}'`)
       .join(', ');
     
@@ -325,7 +325,7 @@ ${indent}</div>`;
     return instructions;
   }
 
-  async generateWithAI(prompt: string, context?: any): Promise<string> {
+  async generateWithAI(prompt: string): Promise<string> {
     // This would call an actual AI API like OpenAI or Claude
     // For now, we'll return a mock response
     
@@ -353,7 +353,7 @@ export default function AIGeneratedComponent() {
 }
 
 // Utility functions for code generation
-export function generateProjectStructure(elements: CanvasElement[]): {
+export function generateProjectStructure(): {
   pages: string[];
   components: string[];
   utils: string[];

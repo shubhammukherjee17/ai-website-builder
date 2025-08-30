@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { projectsServer } from '@/lib/database/projects';
 
 // Helper function to check if Supabase is configured
 function isSupabaseConfigured() {
@@ -12,7 +11,7 @@ function isSupabaseConfigured() {
          supabaseAnonKey !== 'your_supabase_anon_key_here'
 }
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     // Check if Supabase is configured
     if (!isSupabaseConfigured()) {

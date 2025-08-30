@@ -197,6 +197,17 @@ export default function EditorPage({ params }: EditorPageProps) {
           })
         });
         
+        if (!response.ok) {
+          // Handle HTTP errors
+          if (response.status === 401) {
+            throw new Error('You are not logged in. Please log in and try again.');
+          } else if (response.status === 400) {
+            throw new Error('Database not configured. Saving is not available in demo mode.');
+          } else {
+            throw new Error(`Server error: ${response.status} ${response.statusText}`);
+          }
+        }
+        
         const result = await response.json();
         
         if (result.success) {
@@ -205,6 +216,7 @@ export default function EditorPage({ params }: EditorPageProps) {
           // Update URL to reflect the new project ID
           window.history.replaceState(null, '', `/editor/${result.data.id}`);
           console.log('New project created and saved');
+          alert('Project created and saved successfully!');
         } else {
           throw new Error(result.error || 'Failed to create project');
         }
@@ -220,17 +232,35 @@ export default function EditorPage({ params }: EditorPageProps) {
           })
         });
         
+        if (!response.ok) {
+          // Handle HTTP errors
+          if (response.status === 401) {
+            throw new Error('You are not logged in. Please log in and try again.');
+          } else if (response.status === 400) {
+            throw new Error('Database not configured. Saving is not available in demo mode.');
+          } else if (response.status === 404) {
+            throw new Error('Project not found. It may have been deleted.');
+          } else {
+            throw new Error(`Server error: ${response.status} ${response.statusText}`);
+          }
+        }
+        
         const result = await response.json();
         
         if (result.success) {
           console.log('Project saved successfully');
+          alert('Project saved successfully!');
         } else {
           throw new Error(result.error || 'Failed to save project');
         }
       }
     } catch (error) {
       console.error('Save failed:', error);
-      alert('Failed to save project: ' + (error instanceof Error ? error.message : 'Unknown error'));
+      if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
+        alert('Network error: Unable to connect to the server. Please check your internet connection and try again.');
+      } else {
+        alert('Failed to save project: ' + (error instanceof Error ? error.message : 'Unknown error'));
+      }
     } finally {
       setIsSaving(false);
     }
@@ -695,12 +725,7 @@ export default function EditorPage({ params }: EditorPageProps) {
       <AIAssistant
         isOpen={showAIAssistant}
         onToggle={() => setShowAIAssistant(!showAIAssistant)}
-        context={{
-          current_project: project,
-          selected_element: selectedElement,
-        }}
         onCodeGenerate={() => handleGenerateCode()}
-        onElementUpdate={handleElementUpdate}
       />
     </div>
   );

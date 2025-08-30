@@ -59,7 +59,7 @@ export default function PropertyPanel({
                 Text Content
               </label>
               <textarea
-                value={selectedElement.props.children || ''}
+                value={(selectedElement.props.children as string) || ''}
                 onChange={(e) => updateProps({ children: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 rows={3}
@@ -70,7 +70,7 @@ export default function PropertyPanel({
                 Font Size
               </label>
               <select
-                value={selectedElement.props.fontSize || 'text-base'}
+                value={(selectedElement.props.fontSize as string) || 'text-base'}
                 onChange={(e) => updateProps({ fontSize: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
               >
@@ -89,7 +89,7 @@ export default function PropertyPanel({
                 Text Alignment
               </label>
               <select
-                value={selectedElement.props.textAlign || 'text-left'}
+                value={(selectedElement.props.textAlign as string) || 'text-left'}
                 onChange={(e) => updateProps({ textAlign: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
               >
@@ -111,7 +111,7 @@ export default function PropertyPanel({
               </label>
               <input
                 type="url"
-                value={selectedElement.props.src || ''}
+                value={(selectedElement.props.src as string) || ''}
                 onChange={(e) => updateProps({ src: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 placeholder="https://example.com/image.jpg"
@@ -123,7 +123,7 @@ export default function PropertyPanel({
               </label>
               <input
                 type="text"
-                value={selectedElement.props.alt || ''}
+                value={(selectedElement.props.alt as string) || ''}
                 onChange={(e) => updateProps({ alt: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 placeholder="Describe the image"
@@ -134,7 +134,7 @@ export default function PropertyPanel({
                 Object Fit
               </label>
               <select
-                value={selectedElement.props.objectFit || 'object-cover'}
+                value={(selectedElement.props.objectFit as string) || 'object-cover'}
                 onChange={(e) => updateProps({ objectFit: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
               >
@@ -156,7 +156,7 @@ export default function PropertyPanel({
               </label>
               <input
                 type="text"
-                value={selectedElement.props.children || ''}
+                value={(selectedElement.props.children as string) || ''}
                 onChange={(e) => updateProps({ children: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
               />
@@ -166,7 +166,7 @@ export default function PropertyPanel({
                 Button Style
               </label>
               <select
-                value={selectedElement.props.variant || 'primary'}
+                value={(selectedElement.props.variant as string) || 'primary'}
                 onChange={(e) => {
                   const variant = e.target.value;
                   let className = '';
@@ -205,7 +205,7 @@ export default function PropertyPanel({
                 Input Type
               </label>
               <select
-                value={selectedElement.props.type || 'text'}
+                value={(selectedElement.props.type as string) || 'text'}
                 onChange={(e) => updateProps({ type: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
               >
@@ -223,7 +223,7 @@ export default function PropertyPanel({
               </label>
               <input
                 type="text"
-                value={selectedElement.props.placeholder || ''}
+                value={(selectedElement.props.placeholder as string) || ''}
                 onChange={(e) => updateProps({ placeholder: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
               />
@@ -240,7 +240,7 @@ export default function PropertyPanel({
               </label>
               <input
                 type="text"
-                value={selectedElement.props.title || ''}
+                value={(selectedElement.props.title as string) || ''}
                 onChange={(e) => updateProps({ title: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
               />
@@ -250,7 +250,7 @@ export default function PropertyPanel({
                 Hero Subtitle
               </label>
               <textarea
-                value={selectedElement.props.subtitle || ''}
+                value={(selectedElement.props.subtitle as string) || ''}
                 onChange={(e) => updateProps({ subtitle: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 rows={3}
@@ -268,7 +268,7 @@ export default function PropertyPanel({
               </label>
               <input
                 type="text"
-                value={selectedElement.props.title || ''}
+                value={(selectedElement.props.title as string) || ''}
                 onChange={(e) => updateProps({ title: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
               />
@@ -278,7 +278,7 @@ export default function PropertyPanel({
                 Card Content
               </label>
               <textarea
-                value={selectedElement.props.content || ''}
+                value={(selectedElement.props.content as string) || ''}
                 onChange={(e) => updateProps({ content: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 rows={4}
@@ -295,7 +295,7 @@ export default function PropertyPanel({
                 Content
               </label>
               <textarea
-                value={selectedElement.props.children || ''}
+                value={(selectedElement.props.children as string) || ''}
                 onChange={(e) => updateProps({ children: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 rows={3}
@@ -315,13 +315,13 @@ export default function PropertyPanel({
         <div className="flex space-x-2">
           <input
             type="color"
-            value={selectedElement.styles.backgroundColor || '#ffffff'}
+            value={(selectedElement.styles.backgroundColor as string) || '#ffffff'}
             onChange={(e) => updateStyles({ backgroundColor: e.target.value })}
             className="w-12 h-10 border border-gray-300 rounded cursor-pointer"
           />
           <input
             type="text"
-            value={selectedElement.styles.backgroundColor || ''}
+            value={(selectedElement.styles.backgroundColor as string) || ''}
             onChange={(e) => updateStyles({ backgroundColor: e.target.value })}
             placeholder="#ffffff"
             className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
@@ -335,13 +335,13 @@ export default function PropertyPanel({
         <div className="flex space-x-2">
           <input
             type="color"
-            value={selectedElement.styles.color || '#000000'}
+            value={(selectedElement.styles.color as string) || '#000000'}
             onChange={(e) => updateStyles({ color: e.target.value })}
             className="w-12 h-10 border border-gray-300 rounded cursor-pointer"
           />
           <input
             type="text"
-            value={selectedElement.styles.color || ''}
+            value={(selectedElement.styles.color as string) || ''}
             onChange={(e) => updateStyles({ color: e.target.value })}
             placeholder="#000000"
             className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
@@ -356,12 +356,12 @@ export default function PropertyPanel({
           type="range"
           min="0"
           max="50"
-          value={parseInt(selectedElement.styles.borderRadius) || 0}
+          value={parseInt((selectedElement.styles.borderRadius as string)) || 0}
           onChange={(e) => updateStyles({ borderRadius: `${e.target.value}px` })}
           className="w-full"
         />
         <div className="text-sm text-gray-500 text-center mt-1">
-          {selectedElement.styles.borderRadius || '0px'}
+          {(selectedElement.styles.borderRadius as string) || '0px'}
         </div>
       </div>
       <div>
@@ -373,12 +373,12 @@ export default function PropertyPanel({
           min="0"
           max="1"
           step="0.1"
-          value={selectedElement.styles.opacity || 1}
+          value={(selectedElement.styles.opacity as number) || 1}
           onChange={(e) => updateStyles({ opacity: parseFloat(e.target.value) })}
           className="w-full"
         />
         <div className="text-sm text-gray-500 text-center mt-1">
-          {Math.round((selectedElement.styles.opacity || 1) * 100)}%
+          {Math.round(((selectedElement.styles.opacity as number) || 1) * 100)}%
         </div>
       </div>
     </div>
@@ -444,12 +444,12 @@ export default function PropertyPanel({
           type="range"
           min="0"
           max="50"
-          value={parseInt(selectedElement.styles.padding) || 0}
+          value={parseInt((selectedElement.styles.padding as string)) || 0}
           onChange={(e) => updateStyles({ padding: `${e.target.value}px` })}
           className="w-full"
         />
         <div className="text-sm text-gray-500 text-center mt-1">
-          {selectedElement.styles.padding || '0px'}
+          {(selectedElement.styles.padding as string) || '0px'}
         </div>
       </div>
     </div>

@@ -174,7 +174,7 @@ export async function PUT(request: NextRequest) {
     const generator = new AICodeGenerator(process.env.OPENAI_API_KEY);
 
     // Generate backend API code
-    const generatedCode = await generator.generateBackendAPI(description, databaseSchema);
+    const generatedCode = await generator.generateBackendAPI();
 
     // Save AI generation record
     const { data: aiGeneration, error: aiError } = await supabase
