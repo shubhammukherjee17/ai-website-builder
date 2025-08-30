@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 
@@ -46,7 +47,7 @@ export default function EditorPage({ params }: EditorPageProps) {
   const resolvedParams = use(params);
   const [elements, setElements] = useState<CanvasElement[]>([]);
   const [selectedElementId, setSelectedElementId] = useState<string | null>(null);
-  const [isPreviewMode, setIsPreviewMode] = useState(false);
+
   const [viewportSize, setViewportSize] = useState<'mobile' | 'tablet' | 'desktop'>('desktop');
   const [project, setProject] = useState<any>(null);
   const [isSaving, setIsSaving] = useState(false);
@@ -59,6 +60,7 @@ export default function EditorPage({ params }: EditorPageProps) {
   const [activeId, setActiveId] = useState<string | null>(null);
   const [draggedItem, setDraggedItem] = useState<any>(null);
   const [interactionMode, setInteractionMode] = useState<'drag' | 'click'>('drag');
+  const [isPreviewMode, setIsPreviewMode] = useState(false);
 
   // Load project data
   useEffect(() => {
@@ -125,6 +127,10 @@ export default function EditorPage({ params }: EditorPageProps) {
     if (!canvasElement) return;
 
     const canvasRect = canvasElement.getBoundingClientRect();
+    
+    // Add null check for active.rect.current.translated
+    if (!active.rect.current.translated) return;
+    
     const dropPosition = {
       x: event.delta.x + active.rect.current.translated.left - canvasRect.left,
       y: event.delta.y + active.rect.current.translated.top - canvasRect.top,
@@ -195,7 +201,7 @@ export default function EditorPage({ params }: EditorPageProps) {
         
         if (result.success) {
           // Update project state with new ID
-          setProject(() => ({ ...prev, id: result.data.id }));
+          setProject((prev: any) => ({ ...prev, id: result.data.id }));
           // Update URL to reflect the new project ID
           window.history.replaceState(null, '', `/editor/${result.data.id}`);
           console.log('New project created and saved');
@@ -224,16 +230,13 @@ export default function EditorPage({ params }: EditorPageProps) {
       }
     } catch (error) {
       console.error('Save failed:', error);
-      alert('Failed to save project: ' + error.message);
+      alert('Failed to save project: ' + (error instanceof Error ? error.message : 'Unknown error'));
     } finally {
       setIsSaving(false);
     }
   };
 
-  const handlePreview = () => {
-    setIsPreviewMode(!isPreviewMode);
-    setSelectedElementId(null);
-  };
+
 
   const handleGenerateCode = async () => {
     if (elements.length === 0) {
@@ -241,36 +244,51 @@ export default function EditorPage({ params }: EditorPageProps) {
       return;
     }
 
+    console.log('Starting code generation with elements:', elements);
     setIsGenerating(true);
     try {
       // Use project id, but handle 'new' case
       const projectId = project?.id === 'new' ? 'demo-project' : (project?.id || resolvedParams.projectId);
+      
+      const requestBody = {
+        projectId,
+        elements,
+        options: {
+          framework: 'react',
+          includeStyles: true,
+          responsive: true,
+          exportFormat: 'component'
+        }
+      };
+      
+      console.log('Code generation request:', requestBody);
       
       const response = await fetch('/api/generate/code', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          projectId,
-          elements,
-          options: {
-            framework: 'react',
-            includeStyles: true,
-            responsive: true,
-            exportFormat: 'component'
-          }
-        }),
+        body: JSON.stringify(requestBody),
       });
 
+      console.log('Code generation response status:', response.status);
+
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errorText = await response.text();
+        console.error('Code generation HTTP error:', errorText);
+        throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
       }
 
       const result = await response.json();
+      console.log('Code generation result:', result);
 
-      if (result.success || result.data) {
-        setGeneratedCode(result.data || result);
+      if (result.success && result.data) {
+        console.log('Setting generated code:', result.data);
+        setGeneratedCode(result.data);
+        setShowCodeModal(true);
+      } else if (result.data) {
+        console.log('Setting generated code (fallback):', result.data);
+        setGeneratedCode(result.data);
         setShowCodeModal(true);
       } else {
         console.error('Code generation failed:', result.error);
@@ -278,7 +296,7 @@ export default function EditorPage({ params }: EditorPageProps) {
       }
     } catch (error) {
       console.error('Code generation error:', error);
-      alert('Code generation failed: ' + (error.message || 'Network error'));
+      alert('Code generation failed: ' + (error instanceof Error ? error.message : 'Network error'));
     } finally {
       setIsGenerating(false);
     }
@@ -327,7 +345,7 @@ export default function EditorPage({ params }: EditorPageProps) {
     return heights[type] || 100;
   };
 
-  const selectedElement = elements.find(el => el.id === selectedElementId) || null;
+  const selectedElement = elements.find(el => el.id === selectedElementId) || undefined;
 
   const getCanvasWidth = () => {
     switch (viewportSize) {
@@ -413,39 +431,37 @@ export default function EditorPage({ params }: EditorPageProps) {
           <div className="flex items-center space-x-1 sm:space-x-2">
             {/* Mobile Menu Buttons */}
             <div className="lg:hidden flex items-center space-x-1">
-              {!isPreviewMode && (
-                <>
-                  <button
-                    onClick={() => setShowMobilePalette(true)}
-                    className="p-2 text-gray-600 hover:text-gray-900"
-                    title="Components"
-                  >
-                    <Menu className="w-5 h-5" />
-                  </button>
-                  {selectedElement && (
-                    <button
-                      onClick={() => setShowMobileProperties(true)}
-                      className="p-2 text-gray-600 hover:text-gray-900"
-                      title="Properties"
-                    >
-                      <Settings className="w-5 h-5" />
-                    </button>
-                  )}
-                </>
+              <button
+                onClick={() => setShowMobilePalette(true)}
+                className="p-2 text-gray-600 hover:text-gray-900"
+                title="Components"
+              >
+                <Menu className="w-5 h-5" />
+              </button>
+              {selectedElement && (
+                <button
+                  onClick={() => setShowMobileProperties(true)}
+                  className="p-2 text-gray-600 hover:text-gray-900"
+                  title="Properties"
+                >
+                  <Settings className="w-5 h-5" />
+                </button>
               )}
             </div>
 
             {/* Preview Button */}
             <button
-              onClick={handlePreview}
-              className={`flex items-center space-x-1 sm:space-x-2 px-2 sm:px-4 py-2 rounded-lg font-medium transition-colors text-sm ${
-                isPreviewMode
-                  ? 'bg-gray-200 text-gray-900'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
+              onClick={() => {
+                if (elements.length === 0) {
+                  alert('Add some components to preview your website');
+                  return;
+                }
+                setShowCodeModal(true);
+              }}
+              className="flex items-center space-x-1 sm:space-x-2 px-2 sm:px-4 py-2 rounded-lg font-medium transition-colors text-sm bg-gray-100 text-gray-700 hover:bg-gray-200"
             >
               <Eye className="w-4 h-4" />
-              <span className="hidden sm:inline">{isPreviewMode ? 'Edit' : 'Preview'}</span>
+              <span className="hidden sm:inline">Preview</span>
             </button>
 
             {/* Action Buttons - Hidden on smaller screens */}
@@ -543,11 +559,9 @@ export default function EditorPage({ params }: EditorPageProps) {
       <div className="flex-1 flex overflow-hidden relative">
         <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
           {/* Desktop Component Palette */}
-          {!isPreviewMode && (
-            <div className="hidden lg:block h-full">
-              <ComponentPalette />
-            </div>
-          )}
+          <div className="hidden lg:block h-full">
+            <ComponentPalette />
+          </div>
 
           {/* Canvas Area */}
           <div className="flex-1 flex justify-center p-2 sm:p-4 lg:p-8 overflow-auto" data-canvas>
@@ -558,7 +572,6 @@ export default function EditorPage({ params }: EditorPageProps) {
                 minHeight: '600px',
                 maxWidth: '100%'
               }}
-              className="sm:min-h-[800px]"
             >
               <Canvas
                 elements={elements}
@@ -574,14 +587,12 @@ export default function EditorPage({ params }: EditorPageProps) {
           </div>
 
           {/* Desktop Property Panel */}
-          {!isPreviewMode && (
-            <div className="hidden lg:block h-full">
-              <PropertyPanel
-                selectedElement={selectedElement}
-                onElementUpdate={handleElementUpdate}
-              />
-            </div>
-          )}
+          <div className="hidden lg:block h-full">
+            <PropertyPanel
+              selectedElement={selectedElement}
+              onElementUpdate={handleElementUpdate}
+            />
+          </div>
 
           {/* Mobile Component Palette Modal */}
           {showMobilePalette && (
@@ -670,12 +681,13 @@ export default function EditorPage({ params }: EditorPageProps) {
       </div>
 
       {/* Code Preview Modal */}
-      {showCodeModal && generatedCode && (
+      {showCodeModal && (
         <CodePreviewModal
           isOpen={showCodeModal}
           onClose={() => setShowCodeModal(false)}
-          generatedCode={generatedCode}
-          title="Generated React Component"
+          generatedCode={generatedCode || { code: '', type: 'html' }}
+          elements={elements}
+          title="Preview & Code"
         />
       )}
 

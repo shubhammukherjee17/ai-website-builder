@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const supabase = createClient();
+    const supabase = await createClient();
     
     // Check if user is authenticated
     const { data: { user }, error: userError } = await supabase.auth.getUser();
@@ -73,7 +73,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const supabase = createClient();
+    const supabase = await createClient();
     
     // Check if user is authenticated
     const { data: { user }, error: userError } = await supabase.auth.getUser();

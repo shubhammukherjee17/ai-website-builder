@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import { Trash2, Move, Copy, RotateCcw } from 'lucide-react';
 import { CanvasElement, ComponentType } from '@/types';
 
@@ -25,6 +25,7 @@ export default function CanvasComponent({
   onUpdate,
   onDelete
 }: CanvasComponentProps) {
+  const elementRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
@@ -36,8 +37,21 @@ export default function CanvasComponent({
     }
   };
 
+  const handleDoubleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!isPreviewMode) {
+      onSelect();
+    }
+  };
+
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     if (isPreviewMode) return;
+    
+    // Check if clicking on resize handle
+    const target = e.target as HTMLElement;
+    if (target.classList.contains('resize-handle')) {
+      return; // Let resize handler deal with it
+    }
     
     // In click mode, only allow selection on click, not dragging
     if (interactionMode === 'click') {
@@ -159,19 +173,19 @@ export default function CanvasComponent({
       case 'text':
         return (
           <div 
-            className={element.props.className || 'text-gray-900'}
+            className={element.props?.className || 'text-gray-900 p-2'}
             style={element.styles}
           >
-            {element.props.children || 'Text'}
+            {element.props?.children || element.props?.text || 'Text'}
           </div>
         );
 
       case 'image':
         return (
           <img
-            src={element.props.src || 'https://via.placeholder.com/300x200'}
-            alt={element.props.alt || 'Image'}
-            className={element.props.className || 'rounded-lg object-cover'}
+            src={element.props?.src || 'https://via.placeholder.com/300x200'}
+            alt={element.props?.alt || 'Image'}
+            className={element.props?.className || 'rounded-lg object-cover'}
             style={{
               width: '100%',
               height: '100%',
@@ -183,20 +197,20 @@ export default function CanvasComponent({
       case 'button':
         return (
           <button
-            className={element.props.className || 'px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors'}
+            className={element.props?.className || 'px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors'}
             style={element.styles}
-            onClick={isPreviewMode ? element.props.onClick : undefined}
+            onClick={isPreviewMode ? element.props?.onClick : undefined}
           >
-            {element.props.children || 'Button'}
+            {element.props?.children || element.props?.text || 'Button'}
           </button>
         );
 
       case 'input':
         return (
           <input
-            type={element.props.type || 'text'}
-            placeholder={element.props.placeholder || 'Enter text...'}
-            className={element.props.className || 'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500'}
+            type={element.props?.type || 'text'}
+            placeholder={element.props?.placeholder || 'Enter text...'}
+            className={element.props?.className || 'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500'}
             style={element.styles}
           />
         );
@@ -204,54 +218,54 @@ export default function CanvasComponent({
       case 'container':
         return (
           <div
-            className={element.props.className || 'p-4 bg-gray-50 border border-gray-200 rounded-lg'}
+            className={element.props?.className || 'p-4 bg-gray-50 border border-gray-200 rounded-lg'}
             style={element.styles}
           >
-            {element.props.children || 'Container'}
+            {element.props?.children || 'Container'}
           </div>
         );
 
       case 'header':
         return (
           <header
-            className={element.props.className || 'w-full py-4 px-6 bg-white border-b border-gray-200'}
+            className={element.props?.className || 'w-full py-4 px-6 bg-white border-b border-gray-200'}
             style={element.styles}
           >
-            {element.props.children || 'Header'}
+            {element.props?.children || 'Header'}
           </header>
         );
 
       case 'footer':
         return (
           <footer
-            className={element.props.className || 'w-full py-8 px-6 bg-gray-900 text-white'}
+            className={element.props?.className || 'w-full py-8 px-6 bg-gray-900 text-white'}
             style={element.styles}
           >
-            {element.props.children || 'Footer'}
+            {element.props?.children || 'Footer'}
           </footer>
         );
 
       case 'navbar':
         return (
           <nav
-            className={element.props.className || 'w-full py-4 px-6 bg-gray-900 text-white'}
+            className={element.props?.className || 'w-full py-4 px-6 bg-gray-900 text-white'}
             style={element.styles}
           >
-            {element.props.children || 'Navigation Bar'}
+            {element.props?.children || 'Navigation Bar'}
           </nav>
         );
 
       case 'hero':
         return (
           <div
-            className={element.props.className || 'text-center py-20 bg-gray-50'}
+            className={element.props?.className || 'text-center py-20 bg-gray-50'}
             style={element.styles}
           >
             <h1 className="text-4xl font-bold text-gray-900 mb-4">
-              {element.props.title || 'Hero Title'}
+              {element.props?.title || 'Hero Title'}
             </h1>
             <p className="text-xl text-gray-600">
-              {element.props.subtitle || 'Hero subtitle goes here'}
+              {element.props?.subtitle || 'Hero subtitle goes here'}
             </p>
           </div>
         );
@@ -259,14 +273,14 @@ export default function CanvasComponent({
       case 'card':
         return (
           <div
-            className={element.props.className || 'p-6 bg-white border border-gray-200 rounded-lg shadow-sm'}
+            className={element.props?.className || 'p-6 bg-white border border-gray-200 rounded-lg shadow-sm'}
             style={element.styles}
           >
             <h3 className="text-lg font-semibold text-gray-900 mb-2">
-              {element.props.title || 'Card Title'}
+              {element.props?.title || 'Card Title'}
             </h3>
             <p className="text-gray-600">
-              {element.props.content || 'Card content goes here'}
+              {element.props?.content || 'Card content goes here'}
             </p>
           </div>
         );
@@ -274,7 +288,7 @@ export default function CanvasComponent({
       case 'form':
         return (
           <form
-            className={element.props.className || 'space-y-4 p-6 bg-white border border-gray-200 rounded-lg'}
+            className={element.props?.className || 'space-y-4 p-6 bg-white border border-gray-200 rounded-lg'}
             style={element.styles}
           >
             <div>
@@ -307,7 +321,7 @@ export default function CanvasComponent({
       case 'grid':
         return (
           <div
-            className={element.props.className || 'grid grid-cols-2 gap-4 p-4 border border-gray-200 rounded-lg'}
+            className={element.props?.className || 'grid grid-cols-2 gap-4 p-4 border border-gray-200 rounded-lg'}
             style={element.styles}
           >
             <div className="bg-gray-100 p-4 rounded text-center">Grid Item 1</div>
@@ -320,7 +334,7 @@ export default function CanvasComponent({
       case 'flex':
         return (
           <div
-            className={element.props.className || 'flex items-center justify-center p-4 border border-gray-200 rounded-lg space-x-4'}
+            className={element.props?.className || 'flex items-center justify-center p-4 border border-gray-200 rounded-lg space-x-4'}
             style={element.styles}
           >
             <div className="bg-gray-100 p-4 rounded">Flex Item 1</div>
@@ -345,18 +359,21 @@ export default function CanvasComponent({
   const getCursorStyle = () => {
     if (isPreviewMode) return '';
     if (interactionMode === 'click') return 'cursor-pointer';
-    return 'cursor-move';
+    return isDragging ? 'cursor-grabbing' : 'cursor-grab';
   };
 
   return (
     <div
+      ref={elementRef}
       className={`
-        absolute group select-none
-        ${isSelected && !isPreviewMode ? 'ring-2 ring-indigo-500 ring-opacity-75' : ''}
+        absolute group select-none transition-all duration-200
+        ${isSelected && !isPreviewMode ? 
+          (interactionMode === 'click' ? 'ring-2 ring-green-500 ring-opacity-75' : 'ring-2 ring-indigo-500 ring-opacity-75') 
+          : ''
+        }
         ${!isPreviewMode ? `hover:ring-2 hover:ring-indigo-300 hover:ring-opacity-50 ${getCursorStyle()}` : ''}
         ${isDragging ? 'ring-2 ring-indigo-400 ring-opacity-90 shadow-lg' : ''}
         ${isResizing ? 'ring-2 ring-purple-400 ring-opacity-90' : ''}
-        transition-all duration-200
       `}
       style={{
         left: element.position.x,
@@ -364,11 +381,14 @@ export default function CanvasComponent({
         width: element.size.width,
         height: element.size.height,
         zIndex: isSelected ? 1000 : isDragging || isResizing ? 1001 : 1,
+        userSelect: isDragging || isResizing ? 'none' : 'auto',
       }}
       onClick={handleClick}
+      onDoubleClick={handleDoubleClick}
+      onMouseDown={interactionMode === 'drag' ? handleMouseDown : undefined}
     >
-      {/* Drag overlay - makes entire component draggable/clickable */}
-      {!isPreviewMode && (
+      {/* Drag overlay for drag mode */}
+      {interactionMode === 'drag' && !isPreviewMode && (
         <div
           className={`absolute inset-0 z-10 ${getCursorStyle()}`}
           onMouseDown={handleMouseDown}
@@ -378,7 +398,7 @@ export default function CanvasComponent({
       {/* Selection controls */}
       {isSelected && !isPreviewMode && (
         <>
-          {/* Drag handle label with mode indicator */}
+          {/* Element type indicator */}
           <div className="absolute -top-8 left-0 bg-indigo-600 text-white px-2 py-1 rounded text-xs font-medium flex items-center space-x-1 shadow-md z-20">
             <Move className="w-3 h-3" />
             <span>{element.type}</span>
@@ -449,6 +469,16 @@ export default function CanvasComponent({
             <button
               onClick={(e) => {
                 e.stopPropagation();
+                onUpdate({ styles: {} });
+              }}
+              className="bg-blue-600 text-white p-1 rounded hover:bg-blue-700 transition-colors shadow-md"
+              title="Reset styles"
+            >
+              <RotateCcw className="w-3 h-3" />
+            </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
                 onDelete();
               }}
               className="bg-red-600 text-white p-1 rounded hover:bg-red-700 transition-colors shadow-md"
@@ -458,49 +488,22 @@ export default function CanvasComponent({
             </button>
           </div>
 
-          {/* Corner resize handles */}
-          <div
-            className="absolute -top-1 -left-1 w-3 h-3 bg-indigo-600 cursor-nw-resize rounded-full border border-white shadow-sm z-30 hover:bg-indigo-700"
-            onMouseDown={(e) => handleResizeStart(e, 'nw')}
-            title="Resize"
-          />
-          <div
-            className="absolute -top-1 -right-1 w-3 h-3 bg-indigo-600 cursor-ne-resize rounded-full border border-white shadow-sm z-30 hover:bg-indigo-700"
-            onMouseDown={(e) => handleResizeStart(e, 'ne')}
-            title="Resize"
-          />
-          <div
-            className="absolute -bottom-1 -left-1 w-3 h-3 bg-indigo-600 cursor-sw-resize rounded-full border border-white shadow-sm z-30 hover:bg-indigo-700"
-            onMouseDown={(e) => handleResizeStart(e, 'sw')}
-            title="Resize"
-          />
-          <div
-            className="absolute -bottom-1 -right-1 w-3 h-3 bg-indigo-600 cursor-se-resize rounded-full border border-white shadow-sm z-30 hover:bg-indigo-700"
-            onMouseDown={(e) => handleResizeStart(e, 'se')}
-            title="Resize"
-          />
-
-          {/* Edge resize handles */}
-          <div
-            className="absolute -top-1 left-1/2 transform -translate-x-1/2 w-4 h-2 bg-indigo-600 cursor-n-resize rounded-full border border-white shadow-sm z-30 hover:bg-indigo-700"
-            onMouseDown={(e) => handleResizeStart(e, 'n')}
-            title="Resize"
-          />
-          <div
-            className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-4 h-2 bg-indigo-600 cursor-s-resize rounded-full border border-white shadow-sm z-30 hover:bg-indigo-700"
-            onMouseDown={(e) => handleResizeStart(e, 's')}
-            title="Resize"
-          />
-          <div
-            className="absolute -left-1 top-1/2 transform -translate-y-1/2 w-2 h-4 bg-indigo-600 cursor-w-resize rounded-full border border-white shadow-sm z-30 hover:bg-indigo-700"
-            onMouseDown={(e) => handleResizeStart(e, 'w')}
-            title="Resize"
-          />
-          <div
-            className="absolute -right-1 top-1/2 transform -translate-y-1/2 w-2 h-4 bg-indigo-600 cursor-e-resize rounded-full border border-white shadow-sm z-30 hover:bg-indigo-700"
-            onMouseDown={(e) => handleResizeStart(e, 'e')}
-            title="Resize"
-          />
+          {/* Resize handles */}
+          {['nw', 'n', 'ne', 'e', 'se', 's', 'sw', 'w'].map((handle) => (
+            <div
+              key={handle}
+              className={`
+                absolute w-3 h-3 bg-indigo-600 rounded-full border border-white shadow-sm z-30 hover:bg-indigo-700 resize-handle
+                cursor-${handle}-resize transition-colors
+              `}
+              style={{
+                top: handle.includes('n') ? '-6px' : handle.includes('s') ? 'calc(100% - 6px)' : 'calc(50% - 6px)',
+                left: handle.includes('w') ? '-6px' : handle.includes('e') ? 'calc(100% - 6px)' : 'calc(50% - 6px)',
+              }}
+              onMouseDown={(e) => handleResizeStart(e, handle as ResizeHandle)}
+              title="Resize"
+            />
+          ))}
         </>
       )}
 

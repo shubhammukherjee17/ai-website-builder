@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
@@ -66,7 +67,6 @@ export default function AIAssistant({
         role: 'assistant',
         content: response.content,
         timestamp: new Date(),
-        metadata: response.metadata,
       };
 
       setMessages(prev => [...prev, assistantMessage]);

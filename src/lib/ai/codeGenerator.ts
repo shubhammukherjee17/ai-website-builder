@@ -121,71 +121,147 @@ export default function GeneratedComponent() {
     switch (element.type) {
       case 'text':
         return `${indent}<div
-${indent}  className="${element.props.className || 'text-gray-900'}"
+${indent}  className="${element.props?.className || 'text-gray-900'}"
 ${indent}  style={{ position: 'absolute', ${positionStyle} ${styleProps} }}
 ${indent}>
-${indent}  ${element.props.children || 'Text'}
+${indent}  ${element.props?.children || element.props?.text || 'Text'}
 ${indent}</div>`;
 
       case 'image':
         return `${indent}<img
-${indent}  src="${element.props.src || 'https://via.placeholder.com/300x200'}"
-${indent}  alt="${element.props.alt || 'Image'}"
-${indent}  className="${element.props.className || 'rounded-lg object-cover'}"
+${indent}  src="${element.props?.src || 'https://via.placeholder.com/300x200'}"
+${indent}  alt="${element.props?.alt || 'Image'}"
+${indent}  className="${element.props?.className || 'rounded-lg object-cover'}"
 ${indent}  style={{ position: 'absolute', ${positionStyle} ${styleProps} }}
 ${indent}/>`;
 
       case 'button':
         return `${indent}<button
-${indent}  className="${element.props.className || 'px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors'}"
+${indent}  className="${element.props?.className || 'px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors'}"
 ${indent}  style={{ position: 'absolute', ${positionStyle} ${styleProps} }}
 ${indent}  onClick={() => {
 ${indent}    // TODO: Add your click handler
 ${indent}  }}
 ${indent}>
-${indent}  ${element.props.children || 'Button'}
+${indent}  ${element.props?.children || element.props?.text || 'Button'}
 ${indent}</button>`;
 
       case 'input':
         return `${indent}<input
-${indent}  type="${element.props.type || 'text'}"
-${indent}  placeholder="${element.props.placeholder || 'Enter text...'}"
-${indent}  className="${element.props.className || 'w-full px-3 py-2 border border-gray-300 rounded-md'}"
+${indent}  type="${element.props?.type || 'text'}"
+${indent}  placeholder="${element.props?.placeholder || 'Enter text...'}"
+${indent}  className="${element.props?.className || 'w-full px-3 py-2 border border-gray-300 rounded-md'}"
 ${indent}  style={{ position: 'absolute', ${positionStyle} ${styleProps} }}
 ${indent}/>`;
 
       case 'container':
         return `${indent}<div
-${indent}  className="${element.props.className || 'p-4 bg-gray-50 border border-gray-200 rounded-lg'}"
+${indent}  className="${element.props?.className || 'p-4 bg-gray-50 border border-gray-200 rounded-lg'}"
 ${indent}  style={{ position: 'absolute', ${positionStyle} ${styleProps} }}
 ${indent}>
-${indent}  ${element.props.children || 'Container'}
+${indent}  ${element.props?.children || 'Container'}
 ${indent}</div>`;
 
       case 'hero':
         return `${indent}<div
-${indent}  className="${element.props.className || 'text-center py-20 bg-gray-50'}"
+${indent}  className="${element.props?.className || 'text-center py-20 bg-gray-50'}"
 ${indent}  style={{ position: 'absolute', ${positionStyle} ${styleProps} }}
 ${indent}>
 ${indent}  <h1 className="text-4xl font-bold text-gray-900 mb-4">
-${indent}    ${element.props.title || 'Hero Title'}
+${indent}    ${element.props?.title || 'Hero Title'}
 ${indent}  </h1>
 ${indent}  <p className="text-xl text-gray-600">
-${indent}    ${element.props.subtitle || 'Hero subtitle goes here'}
+${indent}    ${element.props?.subtitle || 'Hero subtitle goes here'}
 ${indent}  </p>
 ${indent}</div>`;
 
       case 'card':
         return `${indent}<div
-${indent}  className="${element.props.className || 'p-6 bg-white border border-gray-200 rounded-lg shadow-sm'}"
+${indent}  className="${element.props?.className || 'p-6 bg-white border border-gray-200 rounded-lg shadow-sm'}"
 ${indent}  style={{ position: 'absolute', ${positionStyle} ${styleProps} }}
 ${indent}>
 ${indent}  <h3 className="text-lg font-semibold text-gray-900 mb-2">
-${indent}    ${element.props.title || 'Card Title'}
+${indent}    ${element.props?.title || 'Card Title'}
 ${indent}  </h3>
 ${indent}  <p className="text-gray-600">
-${indent}    ${element.props.content || 'Card content goes here'}
+${indent}    ${element.props?.content || 'Card content goes here'}
 ${indent}  </p>
+${indent}</div>`;
+
+      case 'header':
+        return `${indent}<header
+${indent}  className="${element.props?.className || 'w-full py-4 px-6 bg-white border-b border-gray-200'}"
+${indent}  style={{ position: 'absolute', ${positionStyle} ${styleProps} }}
+${indent}>
+${indent}  ${element.props?.children || 'Header'}
+${indent}</header>`;
+
+      case 'footer':
+        return `${indent}<footer
+${indent}  className="${element.props?.className || 'w-full py-8 px-6 bg-gray-900 text-white'}"
+${indent}  style={{ position: 'absolute', ${positionStyle} ${styleProps} }}
+${indent}>
+${indent}  ${element.props?.children || 'Footer'}
+${indent}</footer>`;
+
+      case 'navbar':
+        return `${indent}<nav
+${indent}  className="${element.props?.className || 'w-full py-4 px-6 bg-gray-900 text-white'}"
+${indent}  style={{ position: 'absolute', ${positionStyle} ${styleProps} }}
+${indent}>
+${indent}  ${element.props?.children || 'Navigation Bar'}
+${indent}</nav>`;
+
+      case 'form':
+        return `${indent}<form
+${indent}  className="${element.props?.className || 'space-y-4 p-6 bg-white border border-gray-200 rounded-lg'}"
+${indent}  style={{ position: 'absolute', ${positionStyle} ${styleProps} }}
+${indent}>
+${indent}  <div>
+${indent}    <label className="block text-sm font-medium text-gray-700 mb-1">
+${indent}      Name
+${indent}    </label>
+${indent}    <input
+${indent}      type="text"
+${indent}      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+${indent}    />
+${indent}  </div>
+${indent}  <div>
+${indent}    <label className="block text-sm font-medium text-gray-700 mb-1">
+${indent}      Email
+${indent}    </label>
+${indent}    <input
+${indent}      type="email"
+${indent}      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+${indent}    />
+${indent}  </div>
+${indent}  <button
+${indent}    type="submit"
+${indent}    className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 transition-colors"
+${indent}  >
+${indent}    Submit
+${indent}  </button>
+${indent}</form>`;
+
+      case 'grid':
+        return `${indent}<div
+${indent}  className="${element.props?.className || 'grid grid-cols-2 gap-4 p-4 border border-gray-200 rounded-lg'}"
+${indent}  style={{ position: 'absolute', ${positionStyle} ${styleProps} }}
+${indent}>
+${indent}  <div className="bg-gray-100 p-4 rounded text-center">Grid Item 1</div>
+${indent}  <div className="bg-gray-100 p-4 rounded text-center">Grid Item 2</div>
+${indent}  <div className="bg-gray-100 p-4 rounded text-center">Grid Item 3</div>
+${indent}  <div className="bg-gray-100 p-4 rounded text-center">Grid Item 4</div>
+${indent}</div>`;
+
+      case 'flex':
+        return `${indent}<div
+${indent}  className="${element.props?.className || 'flex items-center justify-center p-4 border border-gray-200 rounded-lg space-x-4'}"
+${indent}  style={{ position: 'absolute', ${positionStyle} ${styleProps} }}
+${indent}>
+${indent}  <div className="bg-gray-100 p-4 rounded">Flex Item 1</div>
+${indent}  <div className="bg-gray-100 p-4 rounded">Flex Item 2</div>
+${indent}  <div className="bg-gray-100 p-4 rounded">Flex Item 3</div>
 ${indent}</div>`;
 
       default:
@@ -194,7 +270,7 @@ ${indent}  className="p-4 bg-gray-100 border border-gray-300 rounded-lg"
 ${indent}  style={{ position: 'absolute', ${positionStyle} ${styleProps} }}
 ${indent}>
 ${indent}  {/* ${element.type} component */}
-${indent}  ${element.props.children || 'Component'}
+${indent}  ${element.props?.children || 'Component'}
 ${indent}</div>`;
     }
   }
