@@ -66,7 +66,6 @@ export default function AIAssistant({
         role: 'assistant',
         content: response.content,
         timestamp: new Date(),
-        metadata: response.metadata,
       };
 
       setMessages(prev => [...prev, assistantMessage]);

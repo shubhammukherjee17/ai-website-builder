@@ -29,7 +29,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 
     const resolvedParams = await params;
     const { id } = resolvedParams;
-    const supabase = createClient();
+    const supabase = await createClient();
     
     // Check if user is authenticated
     const { data: { user }, error: userError } = await supabase.auth.getUser();
@@ -89,7 +89,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
     const resolvedParams = await params;
     const { id } = resolvedParams;
-    const supabase = createClient();
+    const supabase = await createClient();
     
     // Check if user is authenticated
     const { data: { user }, error: userError } = await supabase.auth.getUser();
@@ -166,7 +166,7 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
 
     const resolvedParams = await params;
     const { id } = resolvedParams;
-    const supabase = createClient();
+    const supabase = await createClient();
     
     // Check if user is authenticated
     const { data: { user }, error: userError } = await supabase.auth.getUser();

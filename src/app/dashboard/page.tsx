@@ -84,17 +84,17 @@ export default function Dashboard() {
       // If Supabase is not configured, use demo data
       if (!supabaseConfigured) {
         // Mock demo projects
-        const demoProjects = [
+        const demoProjects: Project[] = [
           {
             id: 'demo-1',
             title: 'Landing Page Demo',
             description: 'A beautiful landing page for your startup',
-            status: 'draft' as const,
+            status: 'draft',
             user_id: 'demo-user',
             created_at: '2024-01-15T10:00:00Z',
             updated_at: '2024-01-20T14:30:00Z',
-            deployment_url: null,
-            preview_url: null,
+            deployment_url: undefined,
+            preview_url: undefined,
             elements: [],
             metadata: {}
           },
@@ -102,12 +102,12 @@ export default function Dashboard() {
             id: 'demo-2', 
             title: 'Portfolio Website Demo',
             description: 'Personal portfolio showcasing your work',
-            status: 'deployed' as const,
+            status: 'deployed',
             user_id: 'demo-user',
             created_at: '2024-01-10T08:00:00Z',
             updated_at: '2024-01-18T16:45:00Z',
             deployment_url: 'https://example.com/demo-portfolio',
-            preview_url: null,
+            preview_url: undefined,
             elements: [],
             metadata: {}
           },
@@ -115,12 +115,12 @@ export default function Dashboard() {
             id: 'demo-3',
             title: 'E-commerce Store Demo',
             description: 'Online store for selling products', 
-            status: 'building' as const,
+            status: 'building',
             user_id: 'demo-user',
             created_at: '2024-01-05T12:00:00Z',
             updated_at: '2024-01-22T09:15:00Z',
-            deployment_url: null,
-            preview_url: null,
+            deployment_url: undefined,
+            preview_url: undefined,
             elements: [],
             metadata: {}
           }

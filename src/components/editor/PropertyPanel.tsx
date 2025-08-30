@@ -5,7 +5,7 @@ import { CanvasElement } from '@/types';
 import { Settings, Palette, Layout, Type } from 'lucide-react';
 
 interface PropertyPanelProps {
-  selectedElement: CanvasElement | null;
+  selectedElement: CanvasElement | undefined;
   onElementUpdate: (id: string, updates: Partial<CanvasElement>) => void;
 }
 

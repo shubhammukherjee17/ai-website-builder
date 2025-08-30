@@ -202,15 +202,23 @@ export class ProjectsClient {
 
 // Server-side database operations
 export class ProjectsServer {
-  private supabase;
+  private supabase: any;
 
   constructor() {
-    this.supabase = createServerClient();
+    // Will be initialized when first method is called
+  }
+
+  private async getSupabase() {
+    if (!this.supabase) {
+      this.supabase = await createServerClient();
+    }
+    return this.supabase;
   }
 
   async getAllProjects(): Promise<Project[]> {
     try {
-      const { data, error } = await this.supabase
+      const supabase = await this.getSupabase();
+      const { data, error } = await supabase
         .from('projects')
         .select('*')
         .order('updated_at', { ascending: false });
@@ -229,7 +237,8 @@ export class ProjectsServer {
 
   async getProject(id: string): Promise<Project | null> {
     try {
-      const { data, error } = await this.supabase
+      const supabase = await this.getSupabase();
+      const { data, error } = await supabase
         .from('projects')
         .select('*')
         .eq('id', id)
@@ -249,7 +258,8 @@ export class ProjectsServer {
 
   async createProject(projectData: CreateProjectData, userId: string): Promise<Project | null> {
     try {
-      const { data, error } = await this.supabase
+      const supabase = await this.getSupabase();
+      const { data, error } = await supabase
         .from('projects')
         .insert({
           ...projectData,

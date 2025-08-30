@@ -35,8 +35,8 @@ export interface Project {
   canvas_data: CanvasData;
   generated_code: string | null;
   backend_config: BackendConfig;
-  deployment_url: string | null;
-  preview_url: string | null;
+  deployment_url: string | undefined;
+  preview_url: string | undefined;
   created_at: string;
   updated_at: string;
 }

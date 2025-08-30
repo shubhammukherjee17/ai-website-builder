@@ -102,6 +102,10 @@ export default function EditorPage({ params }: EditorPageProps) {
     if (!canvasElement) return;
 
     const canvasRect = canvasElement.getBoundingClientRect();
+    
+    // Add null check for active.rect.current.translated
+    if (!active.rect.current.translated) return;
+    
     const dropPosition = {
       x: event.delta.x + active.rect.current.translated.left - canvasRect.left,
       y: event.delta.y + active.rect.current.translated.top - canvasRect.top,
@@ -172,7 +176,7 @@ export default function EditorPage({ params }: EditorPageProps) {
         
         if (result.success) {
           // Update project state with new ID
-          setProject(prev => ({ ...prev, id: result.data.id }));
+          setProject((prev: any) => ({ ...prev, id: result.data.id }));
           // Update URL to reflect the new project ID
           window.history.replaceState(null, '', `/editor/${result.data.id}`);
           console.log('New project created and saved');
@@ -201,7 +205,7 @@ export default function EditorPage({ params }: EditorPageProps) {
       }
     } catch (error) {
       console.error('Save failed:', error);
-      alert('Failed to save project: ' + error.message);
+      alert('Failed to save project: ' + (error instanceof Error ? error.message : 'Unknown error'));
     } finally {
       setIsSaving(false);
     }
@@ -255,7 +259,7 @@ export default function EditorPage({ params }: EditorPageProps) {
       }
     } catch (error) {
       console.error('Code generation error:', error);
-      alert('Code generation failed: ' + (error.message || 'Network error'));
+      alert('Code generation failed: ' + (error instanceof Error ? error.message : 'Network error'));
     } finally {
       setIsGenerating(false);
     }
@@ -304,7 +308,7 @@ export default function EditorPage({ params }: EditorPageProps) {
     return heights[type] || 100;
   };
 
-  const selectedElement = elements.find(el => el.id === selectedElementId) || null;
+  const selectedElement = elements.find(el => el.id === selectedElementId) || undefined;
 
   const getCanvasWidth = () => {
     switch (viewportSize) {
@@ -475,13 +479,12 @@ export default function EditorPage({ params }: EditorPageProps) {
           {/* Canvas Area */}
           <div className="flex-1 flex justify-center p-2 sm:p-4 lg:p-8 overflow-auto" data-canvas>
             <div 
-              className="relative bg-white shadow-lg rounded-lg overflow-hidden"
+              className="relative bg-white shadow-lg rounded-lg overflow-hidden sm:min-h-[800px]"
               style={{ 
                 width: getCanvasWidth(),
                 minHeight: '600px',
                 maxWidth: '100%'
               }}
-              className="sm:min-h-[800px]"
             >
               <Canvas
                 elements={elements}

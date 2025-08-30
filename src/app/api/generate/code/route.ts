@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
 
     if (isSupabaseReady) {
       // Supabase is configured - check authentication
-      const supabase = createClient();
+      const supabase = await createClient();
       const { data: { user: authUser }, error: authError } = await supabase.auth.getUser();
       if (authError || !authUser) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
 
     if (isSupabaseReady && user) {
       // Verify user owns the project
-      const supabase = createClient();
+      const supabase = await createClient();
       const { data: project, error: projectError } = await supabase
         .from('projects')
         .select('id, user_id')
@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
 
     // Save AI generation record only if Supabase is configured
     if (isSupabaseReady && user) {
-      const supabase = createClient();
+      const supabase = await createClient();
       const { data: aiGeneration, error: aiError } = await supabase
         .from('ai_generations')
         .insert({
@@ -143,7 +143,7 @@ export async function PUT(request: NextRequest) {
     );
   }
 
-  const supabase = createClient();
+  const supabase = await createClient();
   
   try {
     const { data: { user }, error: authError } = await supabase.auth.getUser();
