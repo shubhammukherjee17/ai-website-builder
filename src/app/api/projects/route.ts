@@ -101,8 +101,8 @@ export async function POST(request: NextRequest) {
       .insert({
         title,
         description: description || '',
-        elements: elements || [],
-        metadata: metadata || {},
+        // elements: elements || [],
+        // metadata: metadata || {},
         user_id: user.id,
         status: 'draft'
       })
