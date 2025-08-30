@@ -287,6 +287,280 @@ export default function PropertyPanel({
           </div>
         );
 
+      case 'navbar':
+        return (
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Brand/Logo Text
+              </label>
+              <input
+                type="text"
+                value={(selectedElement.props.brand as string) || ''}
+                onChange={(e) => updateProps({ brand: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                placeholder="Your Brand"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Navigation Links (one per line)
+              </label>
+              <textarea
+                value={(selectedElement.props.links as string) || 'Home\nAbout\nServices\nContact'}
+                onChange={(e) => updateProps({ links: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                rows={4}
+                placeholder="Home\nAbout\nServices\nContact"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Navigation Style
+              </label>
+              <select
+                value={(selectedElement.props.variant as string) || 'default'}
+                onChange={(e) => updateProps({ variant: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              >
+                <option value="default">Default</option>
+                <option value="transparent">Transparent</option>
+                <option value="dark">Dark</option>
+                <option value="light">Light</option>
+              </select>
+            </div>
+          </div>
+        );
+
+      case 'form':
+        return (
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Form Title
+              </label>
+              <input
+                type="text"
+                value={(selectedElement.props.title as string) || ''}
+                onChange={(e) => updateProps({ title: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                placeholder="Contact Us"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Form Fields (one per line)
+              </label>
+              <textarea
+                value={(selectedElement.props.fields as string) || 'name:text:Your Name\nemail:email:Your Email\nmessage:textarea:Your Message'}
+                onChange={(e) => updateProps({ fields: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                rows={5}
+                placeholder="name:text:Your Name\nemail:email:Your Email\nmessage:textarea:Your Message"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Submit Button Text
+              </label>
+              <input
+                type="text"
+                value={(selectedElement.props.submitText as string) || 'Submit'}
+                onChange={(e) => updateProps({ submitText: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              />
+            </div>
+          </div>
+        );
+
+      case 'header':
+        return (
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Header Title
+              </label>
+              <input
+                type="text"
+                value={(selectedElement.props.title as string) || ''}
+                onChange={(e) => updateProps({ title: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Header Level
+              </label>
+              <select
+                value={(selectedElement.props.level as string) || 'h1'}
+                onChange={(e) => updateProps({ level: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              >
+                <option value="h1">H1 - Main Title</option>
+                <option value="h2">H2 - Section Title</option>
+                <option value="h3">H3 - Subsection</option>
+                <option value="h4">H4 - Small Header</option>
+              </select>
+            </div>
+          </div>
+        );
+
+      case 'footer':
+        return (
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Footer Content
+              </label>
+              <textarea
+                value={(selectedElement.props.content as string) || ''}
+                onChange={(e) => updateProps({ content: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                rows={3}
+                placeholder="© 2024 Your Company. All rights reserved."
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Footer Links (one per line)
+              </label>
+              <textarea
+                value={(selectedElement.props.links as string) || 'Privacy Policy\nTerms of Service\nContact'}
+                onChange={(e) => updateProps({ links: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                rows={3}
+              />
+            </div>
+          </div>
+        );
+
+      case 'container':
+        return (
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Container Type
+              </label>
+              <select
+                value={(selectedElement.props.containerType as string) || 'div'}
+                onChange={(e) => updateProps({ containerType: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              >
+                <option value="div">Generic Container</option>
+                <option value="section">Section</option>
+                <option value="article">Article</option>
+                <option value="aside">Sidebar</option>
+                <option value="main">Main Content</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Layout Direction
+              </label>
+              <select
+                value={(selectedElement.props.direction as string) || 'column'}
+                onChange={(e) => updateProps({ direction: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              >
+                <option value="column">Vertical (Column)</option>
+                <option value="row">Horizontal (Row)</option>
+              </select>
+            </div>
+          </div>
+        );
+
+      case 'grid':
+        return (
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Grid Columns
+              </label>
+              <select
+                value={(selectedElement.props.columns as string) || '3'}
+                onChange={(e) => updateProps({ columns: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              >
+                <option value="1">1 Column</option>
+                <option value="2">2 Columns</option>
+                <option value="3">3 Columns</option>
+                <option value="4">4 Columns</option>
+                <option value="6">6 Columns</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Grid Gap
+              </label>
+              <select
+                value={(selectedElement.props.gap as string) || 'md'}
+                onChange={(e) => updateProps({ gap: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              >
+                <option value="none">No Gap</option>
+                <option value="sm">Small Gap</option>
+                <option value="md">Medium Gap</option>
+                <option value="lg">Large Gap</option>
+                <option value="xl">Extra Large Gap</option>
+              </select>
+            </div>
+          </div>
+        );
+
+      case 'flex':
+        return (
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Flex Direction
+              </label>
+              <select
+                value={(selectedElement.props.direction as string) || 'row'}
+                onChange={(e) => updateProps({ direction: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              >
+                <option value="row">Horizontal (Row)</option>
+                <option value="column">Vertical (Column)</option>
+                <option value="row-reverse">Reverse Horizontal</option>
+                <option value="column-reverse">Reverse Vertical</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Justify Content
+              </label>
+              <select
+                value={(selectedElement.props.justify as string) || 'start'}
+                onChange={(e) => updateProps({ justify: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              >
+                <option value="start">Start</option>
+                <option value="center">Center</option>
+                <option value="end">End</option>
+                <option value="between">Space Between</option>
+                <option value="around">Space Around</option>
+                <option value="evenly">Space Evenly</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Align Items
+              </label>
+              <select
+                value={(selectedElement.props.align as string) || 'start'}
+                onChange={(e) => updateProps({ align: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              >
+                <option value="start">Start</option>
+                <option value="center">Center</option>
+                <option value="end">End</option>
+                <option value="stretch">Stretch</option>
+                <option value="baseline">Baseline</option>
+              </select>
+            </div>
+          </div>
+        );
+
       default:
         return (
           <div className="space-y-4">
@@ -327,7 +601,20 @@ export default function PropertyPanel({
             className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
           />
         </div>
+        {/* Quick background presets */}
+        <div className="grid grid-cols-6 gap-1">
+          {['#ffffff', '#f3f4f6', '#e5e7eb', '#1f2937', '#4f46e5', '#10b981'].map(color => (
+            <button
+              key={color}
+              onClick={() => updateStyles({ backgroundColor: color })}
+              className="w-8 h-8 rounded border-2 border-gray-200 hover:border-gray-400"
+              style={{ backgroundColor: color }}
+              title={color}
+            />
+          ))}
+        </div>
       </div>
+      
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
           Text Color
@@ -347,7 +634,55 @@ export default function PropertyPanel({
             className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
           />
         </div>
+        {/* Quick text color presets */}
+        <div className="grid grid-cols-6 gap-1">
+          {['#000000', '#374151', '#6b7280', '#ef4444', '#3b82f6', '#059669'].map(color => (
+            <button
+              key={color}
+              onClick={() => updateStyles({ color })}
+              className="w-8 h-8 rounded border-2 border-gray-200 hover:border-gray-400"
+              style={{ backgroundColor: color }}
+              title={color}
+            />
+          ))}
+        </div>
       </div>
+      
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Border
+        </label>
+        <div className="space-y-2">
+          <div className="flex space-x-2">
+            <input
+              type="number"
+              min="0"
+              max="10"
+              value={parseInt((selectedElement.styles.borderWidth as string)) || 0}
+              onChange={(e) => updateStyles({ borderWidth: `${e.target.value}px` })}
+              className="w-20 px-2 py-1 border border-gray-300 rounded text-sm"
+              placeholder="0"
+            />
+            <input
+              type="color"
+              value={(selectedElement.styles.borderColor as string) || '#d1d5db'}
+              onChange={(e) => updateStyles({ borderColor: e.target.value })}
+              className="w-12 h-8 border border-gray-300 rounded cursor-pointer"
+            />
+            <select
+              value={(selectedElement.styles.borderStyle as string) || 'solid'}
+              onChange={(e) => updateStyles({ borderStyle: e.target.value })}
+              className="flex-1 px-2 py-1 border border-gray-300 rounded text-sm"
+            >
+              <option value="solid">Solid</option>
+              <option value="dashed">Dashed</option>
+              <option value="dotted">Dotted</option>
+              <option value="none">None</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
           Border Radius
@@ -364,6 +699,25 @@ export default function PropertyPanel({
           {(selectedElement.styles.borderRadius as string) || '0px'}
         </div>
       </div>
+      
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Shadow
+        </label>
+        <select
+          value={(selectedElement.styles.boxShadow as string) || 'none'}
+          onChange={(e) => updateStyles({ boxShadow: e.target.value })}
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        >
+          <option value="none">No Shadow</option>
+          <option value="0 1px 2px 0 rgb(0 0 0 / 0.05)">Small</option>
+          <option value="0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)">Medium</option>
+          <option value="0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)">Large</option>
+          <option value="0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)">Extra Large</option>
+          <option value="0 25px 50px -12px rgb(0 0 0 / 0.25)">2X Large</option>
+        </select>
+      </div>
+      
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
           Opacity

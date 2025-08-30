@@ -8,6 +8,7 @@ import { Project } from '@/lib/database/projects';
 import { createClient } from '@/lib/supabase/client';
 import Navigation from '@/components/layout/Navigation';
 import CodePreviewModal from '@/components/modals/CodePreviewModal';
+import DeploymentStatus from '@/components/deployment/DeploymentStatus';
 import { CanvasElement, ComponentType } from '@/types';
 
 type ProjectStatus = 'draft' | 'building' | 'deployed' | 'failed';
@@ -553,19 +554,13 @@ export default function Dashboard() {
                       <span className="truncate">Updated {formatDate(project.updated_at)}</span>
                     </div>
 
-                    {project.deployment_url && (
-                      <div className="flex items-center text-sm text-green-600 mb-4">
-                        <Globe className="w-4 h-4 mr-1 flex-shrink-0" />
-                        <a
-                          href={project.deployment_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="hover:underline truncate"
-                        >
-                          {project.deployment_url}
-                        </a>
-                      </div>
-                    )}
+                    <div className="mb-4">
+                      <DeploymentStatus
+                        projectId={project.id}
+                        deploymentUrl={project.deployment_url}
+                        status={project.status}
+                      />
+                    </div>
 
                     <div className="flex items-center justify-between pt-4 border-t border-gray-100">
                       <div className="flex items-center space-x-2">

@@ -35,6 +35,7 @@ import Canvas from '@/components/editor/Canvas';
 import PropertyPanel from '@/components/editor/PropertyPanel';
 import CodePreviewModal from '@/components/modals/CodePreviewModal';
 import AIAssistant from '@/components/chat/AIAssistant';
+import DeploymentModal from '@/components/modals/DeploymentModal';
 import { CanvasElement, ComponentType } from '@/types';
 
 interface EditorPageProps {
@@ -61,6 +62,7 @@ export default function EditorPage({ params }: EditorPageProps) {
   const [draggedItem, setDraggedItem] = useState<any>(null);
   const [interactionMode, setInteractionMode] = useState<'drag' | 'click'>('drag');
   const [isPreviewMode, setIsPreviewMode] = useState(false);
+  const [showDeploymentModal, setShowDeploymentModal] = useState(false);
 
   // Load project data
   useEffect(() => {
@@ -333,8 +335,17 @@ export default function EditorPage({ params }: EditorPageProps) {
   };
 
   const handleDeploy = async () => {
-    // TODO: Implement deployment
-    console.log('Deploying project:', resolvedParams.projectId);
+    if (elements.length === 0) {
+      alert('Please add some components to your website before deploying.');
+      return;
+    }
+    
+    if (resolvedParams.projectId === 'new') {
+      alert('Please save your project before deploying.');
+      return;
+    }
+    
+    setShowDeploymentModal(true);
   };
 
   const getDefaultWidth = (type: ComponentType): number => {
@@ -726,7 +737,25 @@ export default function EditorPage({ params }: EditorPageProps) {
         isOpen={showAIAssistant}
         onToggle={() => setShowAIAssistant(!showAIAssistant)}
         onCodeGenerate={() => handleGenerateCode()}
+        currentElements={elements}
+        onElementAdd={(elementType: string, position = { x: 100, y: 100 }) => {
+          // Convert element type to component data for handleElementAdd
+          const componentData = { type: elementType, defaultProps: {} };
+          handleElementAdd(componentData, position);
+        }}
+        projectTitle={project?.title || 'Website Project'}
+        onDeploy={() => setShowDeploymentModal(true)}
       />
+
+      {/* Deployment Modal */}
+      {showDeploymentModal && (
+        <DeploymentModal
+          isOpen={showDeploymentModal}
+          onClose={() => setShowDeploymentModal(false)}
+          projectId={resolvedParams.projectId}
+          projectTitle={project?.title || 'Website Project'}
+        />
+      )}
     </div>
   );
 }

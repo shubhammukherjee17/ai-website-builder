@@ -2,8 +2,11 @@
 
 import React, { useState, useCallback } from 'react';
 import { Trash2, Move, Copy, RotateCcw } from 'lucide-react';
-import Image from 'next/image';
 import { CanvasElement } from '@/types';
+import TextElement from '../elements/TextElement';
+import ButtonElement from '../elements/ButtonElement';
+import ImageElement from '../elements/ImageElement';
+import InputElement from '../elements/InputElement';
 
 interface CanvasComponentProps {
   element: CanvasElement;
@@ -169,51 +172,49 @@ export default function CanvasComponent({
   }, [element.position, element.size, isResizing, onUpdate, isPreviewMode]);
 
   const renderComponent = () => {
+    // Use enhanced components for better functionality
     switch (element.type) {
       case 'text':
         return (
-          <div 
-            className={(element.props?.className as string) || 'text-gray-900 p-2'}
-            style={element.styles}
-          >
-            {(element.props?.children as string) || (element.props?.text as string) || 'Text'}
-          </div>
-        );
-
-      case 'image':
-        return (
-          <Image
-            src={(element.props?.src as string) || 'https://via.placeholder.com/300x200'}
-            alt={(element.props?.alt as string) || 'Image'}
-            width={element.size.width}
-            height={element.size.height}
-            className={(element.props?.className as string) || 'rounded-lg object-cover'}
-            style={{
-              width: '100%',
-              height: '100%',
-              ...element.styles,
-            }}
+          <TextElement
+            element={element}
+            isSelected={isSelected}
+            isPreviewMode={isPreviewMode}
+            onUpdate={onUpdate}
+            onSelect={onSelect}
           />
         );
 
       case 'button':
         return (
-          <button
-            className={(element.props?.className as string) || 'px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors'}
-            style={element.styles}
-            onClick={isPreviewMode ? (element.props?.onClick as () => void) : undefined}
-          >
-            {(element.props?.children as string) || (element.props?.text as string) || 'Button'}
-          </button>
+          <ButtonElement
+            element={element}
+            isSelected={isSelected}
+            isPreviewMode={isPreviewMode}
+            onUpdate={onUpdate}
+            onSelect={onSelect}
+          />
+        );
+
+      case 'image':
+        return (
+          <ImageElement
+            element={element}
+            isSelected={isSelected}
+            isPreviewMode={isPreviewMode}
+            onUpdate={onUpdate}
+            onSelect={onSelect}
+          />
         );
 
       case 'input':
         return (
-          <input
-            type={(element.props?.type as string) || 'text'}
-            placeholder={(element.props?.placeholder as string) || 'Enter text...'}
-            className={(element.props?.className as string) || 'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500'}
-            style={element.styles}
+          <InputElement
+            element={element}
+            isSelected={isSelected}
+            isPreviewMode={isPreviewMode}
+            onUpdate={onUpdate}
+            onSelect={onSelect}
           />
         );
 

@@ -3,16 +3,27 @@
 import * as React from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-// import { useToast } from "@/hooks/use-toast"
 import { createClient } from "@/lib/supabase/client"
+import { Eye, EyeOff, Mail, Lock, AlertCircle, CheckCircle } from 'lucide-react'
+import { useScreenSize, isTouchDevice } from '@/utils/responsive'
+
+interface ValidationErrors {
+  email?: string;
+  password?: string;
+  general?: string;
+}
 
 export function LoginForm() {
   const router = useRouter()
-//   const { toast } = useToast()
+  const screenSize = useScreenSize()
+  const isTouch = isTouchDevice()
 
   const [email, setEmail] = React.useState("")
   const [password, setPassword] = React.useState("")
+  const [showPassword, setShowPassword] = React.useState(false)
   const [loading, setLoading] = React.useState(false)
+  const [errors, setErrors] = React.useState<ValidationErrors>({})
+  const [rememberMe, setRememberMe] = React.useState(false)
 
 
   async function onSubmit(e: React.FormEvent) {
