@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { useDraggable } from '@dnd-kit/core';
+import { useDraggable, DragOverlay, useDndMonitor } from '@dnd-kit/core';
 import { 
   Type, 
   Image, 

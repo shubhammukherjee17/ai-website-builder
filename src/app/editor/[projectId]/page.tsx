@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 
 import React, { useState, useEffect, use } from 'react';
-import { DndContext, DragEndEvent } from '@dnd-kit/core';
+import { DndContext, DragEndEvent, DragStartEvent, DragOverlay } from '@dnd-kit/core';
 import { 
   Play, 
   Save, 
@@ -15,7 +16,18 @@ import {
   Monitor,
   Menu,
   X,
-  ArrowLeft
+  ArrowLeft,
+  Type,
+  Image,
+  MousePointer,
+  Square,
+  FileText,
+  Layout,
+  Navigation,
+  CreditCard,
+  Grid3X3,
+  Minus,
+  Hand
 } from 'lucide-react';
 import ComponentPalette from '@/components/editor/ComponentPalette';
 import Canvas from '@/components/editor/Canvas';
@@ -44,6 +56,9 @@ export default function EditorPage({ params }: EditorPageProps) {
   const [showAIAssistant, setShowAIAssistant] = useState(false);
   const [showMobilePalette, setShowMobilePalette] = useState(false);
   const [showMobileProperties, setShowMobileProperties] = useState(false);
+  const [activeId, setActiveId] = useState<string | null>(null);
+  const [draggedItem, setDraggedItem] = useState<any>(null);
+  const [interactionMode, setInteractionMode] = useState<'drag' | 'click'>('drag');
 
   // Load project data
   useEffect(() => {
@@ -92,8 +107,16 @@ export default function EditorPage({ params }: EditorPageProps) {
     }
   };
 
+  const handleDragStart = (event: DragStartEvent) => {
+    const { active } = event;
+    setActiveId(active.id as string);
+    setDraggedItem(active.data.current);
+  };
+
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
+    setActiveId(null);
+    setDraggedItem(null);
 
     if (!over || over.id !== 'canvas') return;
 
@@ -172,7 +195,7 @@ export default function EditorPage({ params }: EditorPageProps) {
         
         if (result.success) {
           // Update project state with new ID
-          setProject(prev => ({ ...prev, id: result.data.id }));
+          setProject(() => ({ ...prev, id: result.data.id }));
           // Update URL to reflect the new project ID
           window.history.replaceState(null, '', `/editor/${result.data.id}`);
           console.log('New project created and saved');
@@ -358,6 +381,32 @@ export default function EditorPage({ params }: EditorPageProps) {
                 <Monitor className="w-4 h-4" />
               </button>
             </div>
+            
+            {/* Interaction Mode Toggle - Desktop Only */}
+            {!isPreviewMode && (
+              <div className="hidden lg:flex items-center space-x-2 bg-gray-100 rounded-lg p-1">
+                <button
+                  onClick={() => setInteractionMode('drag')}
+                  className={`flex items-center space-x-1 px-3 py-2 rounded text-xs font-medium transition-colors ${
+                    interactionMode === 'drag' ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-600 hover:text-gray-900'
+                  }`}
+                  title="Drag Mode - Drag elements to move them"
+                >
+                  <Hand className="w-3 h-3" />
+                  <span>Drag</span>
+                </button>
+                <button
+                  onClick={() => setInteractionMode('click')}
+                  className={`flex items-center space-x-1 px-3 py-2 rounded text-xs font-medium transition-colors ${
+                    interactionMode === 'click' ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-600 hover:text-gray-900'
+                  }`}
+                  title="Click Mode - Click elements to select them"
+                >
+                  <MousePointer className="w-3 h-3" />
+                  <span>Click</span>
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Right Actions */}
@@ -431,40 +480,68 @@ export default function EditorPage({ params }: EditorPageProps) {
         </div>
 
         {/* Mobile Viewport Controls */}
-        <div className="lg:hidden flex items-center justify-center space-x-2 bg-gray-50 border-t border-gray-200 px-4 py-2">
-          <button
-            onClick={() => setViewportSize('mobile')}
-            className={`flex items-center space-x-1 px-3 py-1 rounded text-sm font-medium transition-colors ${
-              viewportSize === 'mobile' ? 'bg-indigo-100 text-indigo-700' : 'text-gray-600 hover:text-gray-900'
-            }`}
-          >
-            <Smartphone className="w-4 h-4" />
-            <span>Mobile</span>
-          </button>
-          <button
-            onClick={() => setViewportSize('tablet')}
-            className={`flex items-center space-x-1 px-3 py-1 rounded text-sm font-medium transition-colors ${
-              viewportSize === 'tablet' ? 'bg-indigo-100 text-indigo-700' : 'text-gray-600 hover:text-gray-900'
-            }`}
-          >
-            <Tablet className="w-4 h-4" />
-            <span>Tablet</span>
-          </button>
-          <button
-            onClick={() => setViewportSize('desktop')}
-            className={`flex items-center space-x-1 px-3 py-1 rounded text-sm font-medium transition-colors ${
-              viewportSize === 'desktop' ? 'bg-indigo-100 text-indigo-700' : 'text-gray-600 hover:text-gray-900'
-            }`}
-          >
-            <Monitor className="w-4 h-4" />
-            <span>Desktop</span>
-          </button>
+        <div className="lg:hidden flex items-center justify-between bg-gray-50 border-t border-gray-200 px-4 py-2">
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={() => setViewportSize('mobile')}
+              className={`flex items-center space-x-1 px-3 py-1 rounded text-sm font-medium transition-colors ${
+                viewportSize === 'mobile' ? 'bg-indigo-100 text-indigo-700' : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              <Smartphone className="w-4 h-4" />
+              <span>Mobile</span>
+            </button>
+            <button
+              onClick={() => setViewportSize('tablet')}
+              className={`flex items-center space-x-1 px-3 py-1 rounded text-sm font-medium transition-colors ${
+                viewportSize === 'tablet' ? 'bg-indigo-100 text-indigo-700' : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              <Tablet className="w-4 h-4" />
+              <span>Tablet</span>
+            </button>
+            <button
+              onClick={() => setViewportSize('desktop')}
+              className={`flex items-center space-x-1 px-3 py-1 rounded text-sm font-medium transition-colors ${
+                viewportSize === 'desktop' ? 'bg-indigo-100 text-indigo-700' : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              <Monitor className="w-4 h-4" />
+              <span>Desktop</span>
+            </button>
+          </div>
+          
+          {/* Mobile Interaction Mode Toggle */}
+          {!isPreviewMode && (
+            <div className="flex items-center space-x-1 bg-white rounded-lg p-1 border border-gray-200">
+              <button
+                onClick={() => setInteractionMode('drag')}
+                className={`flex items-center space-x-1 px-2 py-1 rounded text-xs font-medium transition-colors ${
+                  interactionMode === 'drag' ? 'bg-indigo-100 text-indigo-700' : 'text-gray-600 hover:text-gray-900'
+                }`}
+                title="Drag Mode"
+              >
+                <Hand className="w-3 h-3" />
+                <span>Drag</span>
+              </button>
+              <button
+                onClick={() => setInteractionMode('click')}
+                className={`flex items-center space-x-1 px-2 py-1 rounded text-xs font-medium transition-colors ${
+                  interactionMode === 'click' ? 'bg-indigo-100 text-indigo-700' : 'text-gray-600 hover:text-gray-900'
+                }`}
+                title="Click Mode"
+              >
+                <MousePointer className="w-3 h-3" />
+                <span>Click</span>
+              </button>
+            </div>
+          )}
         </div>
       </header>
 
       {/* Main Editor */}
       <div className="flex-1 flex overflow-hidden relative">
-        <DndContext onDragEnd={handleDragEnd}>
+        <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
           {/* Desktop Component Palette */}
           {!isPreviewMode && (
             <div className="hidden lg:block h-full">
@@ -491,6 +568,7 @@ export default function EditorPage({ params }: EditorPageProps) {
                 onElementSelect={setSelectedElementId}
                 selectedElementId={selectedElementId}
                 isPreviewMode={isPreviewMode}
+                interactionMode={interactionMode}
               />
             </div>
           </div>
@@ -543,6 +621,20 @@ export default function EditorPage({ params }: EditorPageProps) {
               </div>
             </div>
           )}
+
+          {/* Drag Overlay */}
+          <DragOverlay>
+            {activeId && draggedItem ? (
+              <div className="bg-white border border-indigo-300 rounded-lg shadow-lg p-4 opacity-90">
+                <div className="text-sm font-medium text-indigo-700">
+                  {draggedItem.name}
+                </div>
+                <div className="text-xs text-gray-500 mt-1">
+                  Drop on canvas to add
+                </div>
+              </div>
+            ) : null}
+          </DragOverlay>
         </DndContext>
       </div>
 

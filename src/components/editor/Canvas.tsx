@@ -13,6 +13,7 @@ interface CanvasProps {
   onElementSelect: (id: string | null) => void;
   selectedElementId: string | null;
   isPreviewMode?: boolean;
+  interactionMode?: 'drag' | 'click';
 }
 
 export default function Canvas({
@@ -22,7 +23,8 @@ export default function Canvas({
   onElementDelete,
   onElementSelect,
   selectedElementId,
-  isPreviewMode = false
+  isPreviewMode = false,
+  interactionMode = 'drag'
 }: CanvasProps) {
   const { setNodeRef, isOver } = useDroppable({
     id: 'canvas',
@@ -135,6 +137,7 @@ export default function Canvas({
             element={element}
             isSelected={selectedElementId === element.id}
             isPreviewMode={isPreviewMode}
+            interactionMode={interactionMode}
             onSelect={() => onElementSelect(element.id)}
             onUpdate={(updates) => onElementUpdate(element.id, updates)}
             onDelete={() => onElementDelete(element.id)}
@@ -149,8 +152,17 @@ export default function Canvas({
               <h3 className="text-xl font-medium text-gray-700 mb-2">
                 Start Building Your Website
               </h3>
-              <p className="text-gray-500">
+              <p className="text-gray-500 mb-2">
                 Drag and drop components from the left panel to get started
+              </p>
+              <p className="text-sm text-gray-400">
+                Current mode: <span className="font-medium">{interactionMode === 'drag' ? 'Drag Mode' : 'Click Mode'}</span>
+              </p>
+              <p className="text-xs text-gray-400 mt-1">
+                {interactionMode === 'drag' 
+                  ? 'Click and drag elements anywhere to move them'
+                  : 'Click elements to select, use green handle to move'
+                }
               </p>
             </div>
           </div>
