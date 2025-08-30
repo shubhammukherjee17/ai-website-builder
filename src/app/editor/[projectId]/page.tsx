@@ -34,7 +34,7 @@ export default function EditorPage({ params }: EditorPageProps) {
   const resolvedParams = use(params);
   const [elements, setElements] = useState<CanvasElement[]>([]);
   const [selectedElementId, setSelectedElementId] = useState<string | null>(null);
-  const [isPreviewMode, setIsPreviewMode] = useState(false);
+
   const [viewportSize, setViewportSize] = useState<'mobile' | 'tablet' | 'desktop'>('desktop');
   const [project, setProject] = useState<any>(null);
   const [isSaving, setIsSaving] = useState(false);
@@ -211,10 +211,7 @@ export default function EditorPage({ params }: EditorPageProps) {
     }
   };
 
-  const handlePreview = () => {
-    setIsPreviewMode(!isPreviewMode);
-    setSelectedElementId(null);
-  };
+
 
   const handleGenerateCode = async () => {
     if (elements.length === 0) {
@@ -368,39 +365,37 @@ export default function EditorPage({ params }: EditorPageProps) {
           <div className="flex items-center space-x-1 sm:space-x-2">
             {/* Mobile Menu Buttons */}
             <div className="lg:hidden flex items-center space-x-1">
-              {!isPreviewMode && (
-                <>
-                  <button
-                    onClick={() => setShowMobilePalette(true)}
-                    className="p-2 text-gray-600 hover:text-gray-900"
-                    title="Components"
-                  >
-                    <Menu className="w-5 h-5" />
-                  </button>
-                  {selectedElement && (
-                    <button
-                      onClick={() => setShowMobileProperties(true)}
-                      className="p-2 text-gray-600 hover:text-gray-900"
-                      title="Properties"
-                    >
-                      <Settings className="w-5 h-5" />
-                    </button>
-                  )}
-                </>
+              <button
+                onClick={() => setShowMobilePalette(true)}
+                className="p-2 text-gray-600 hover:text-gray-900"
+                title="Components"
+              >
+                <Menu className="w-5 h-5" />
+              </button>
+              {selectedElement && (
+                <button
+                  onClick={() => setShowMobileProperties(true)}
+                  className="p-2 text-gray-600 hover:text-gray-900"
+                  title="Properties"
+                >
+                  <Settings className="w-5 h-5" />
+                </button>
               )}
             </div>
 
             {/* Preview Button */}
             <button
-              onClick={handlePreview}
-              className={`flex items-center space-x-1 sm:space-x-2 px-2 sm:px-4 py-2 rounded-lg font-medium transition-colors text-sm ${
-                isPreviewMode
-                  ? 'bg-gray-200 text-gray-900'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
+              onClick={() => {
+                if (elements.length === 0) {
+                  alert('Add some components to preview your website');
+                  return;
+                }
+                setShowCodeModal(true);
+              }}
+              className="flex items-center space-x-1 sm:space-x-2 px-2 sm:px-4 py-2 rounded-lg font-medium transition-colors text-sm bg-gray-100 text-gray-700 hover:bg-gray-200"
             >
               <Eye className="w-4 h-4" />
-              <span className="hidden sm:inline">{isPreviewMode ? 'Edit' : 'Preview'}</span>
+              <span className="hidden sm:inline">Preview</span>
             </button>
 
             {/* Action Buttons - Hidden on smaller screens */}
@@ -470,16 +465,14 @@ export default function EditorPage({ params }: EditorPageProps) {
       <div className="flex-1 flex overflow-hidden relative">
         <DndContext onDragEnd={handleDragEnd}>
           {/* Desktop Component Palette */}
-          {!isPreviewMode && (
-            <div className="hidden lg:block h-full">
-              <ComponentPalette />
-            </div>
-          )}
+          <div className="hidden lg:block h-full">
+            <ComponentPalette />
+          </div>
 
           {/* Canvas Area */}
           <div className="flex-1 flex justify-center p-2 sm:p-4 lg:p-8 overflow-auto" data-canvas>
             <div 
-              className="relative bg-white shadow-lg rounded-lg overflow-hidden sm:min-h-[800px]"
+              className="relative bg-white shadow-lg rounded-lg overflow-hidden"
               style={{ 
                 width: getCanvasWidth(),
                 minHeight: '600px',
@@ -493,20 +486,18 @@ export default function EditorPage({ params }: EditorPageProps) {
                 onElementDelete={handleElementDelete}
                 onElementSelect={setSelectedElementId}
                 selectedElementId={selectedElementId}
-                isPreviewMode={isPreviewMode}
+                isPreviewMode={false}
               />
             </div>
           </div>
 
           {/* Desktop Property Panel */}
-          {!isPreviewMode && (
-            <div className="hidden lg:block h-full">
-              <PropertyPanel
-                selectedElement={selectedElement}
-                onElementUpdate={handleElementUpdate}
-              />
-            </div>
-          )}
+          <div className="hidden lg:block h-full">
+            <PropertyPanel
+              selectedElement={selectedElement}
+              onElementUpdate={handleElementUpdate}
+            />
+          </div>
 
           {/* Mobile Component Palette Modal */}
           {showMobilePalette && (
@@ -581,12 +572,13 @@ export default function EditorPage({ params }: EditorPageProps) {
       </div>
 
       {/* Code Preview Modal */}
-      {showCodeModal && generatedCode && (
+      {showCodeModal && (
         <CodePreviewModal
           isOpen={showCodeModal}
           onClose={() => setShowCodeModal(false)}
-          generatedCode={generatedCode}
-          title="Generated React Component"
+          generatedCode={generatedCode || { code: '', type: 'html' }}
+          elements={elements}
+          title="Preview & Code"
         />
       )}
 

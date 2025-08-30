@@ -6,6 +6,8 @@ import { Plus, Edit, Eye, Trash2, Calendar, Globe, Filter, Search } from 'lucide
 import { Project } from '@/lib/database/projects';
 import { createClient } from '@/lib/supabase/client';
 import Navigation from '@/components/layout/Navigation';
+import CodePreviewModal from '@/components/modals/CodePreviewModal';
+import { CanvasElement } from '@/types';
 
 type ProjectStatus = 'draft' | 'building' | 'deployed' | 'failed';
 type SortBy = 'latest' | 'name' | 'status';
@@ -21,6 +23,11 @@ export default function Dashboard() {
   const [error, setError] = useState<string | null>(null);
   const [supabaseConfigured, setSupabaseConfigured] = useState(true);
   
+  // Preview modal state
+  const [showPreviewModal, setShowPreviewModal] = useState(false);
+  const [previewProject, setPreviewProject] = useState<Project | null>(null);
+  const [previewElements, setPreviewElements] = useState<CanvasElement[]>([]);
+
   // Check if Supabase is configured on component mount
   useEffect(() => {
     try {
@@ -84,44 +91,111 @@ export default function Dashboard() {
       // If Supabase is not configured, use demo data
       if (!supabaseConfigured) {
         // Mock demo projects
-        const demoProjects: Project[] = [
+        const demoProjects = [
           {
             id: 'demo-1',
             title: 'Landing Page Demo',
             description: 'A beautiful landing page for your startup',
-            status: 'draft',
+            status: 'draft' as const,
             user_id: 'demo-user',
             created_at: '2024-01-15T10:00:00Z',
             updated_at: '2024-01-20T14:30:00Z',
             deployment_url: undefined,
             preview_url: undefined,
-            elements: [],
+            elements: [
+              {
+                id: 'hero-1',
+                type: 'hero',
+                position: { x: 50, y: 50 },
+                size: { width: 700, height: 300 },
+                props: { title: 'Welcome to Our Startup', subtitle: 'Building amazing products for the future' },
+                styles: {}
+              },
+              {
+                id: 'text-1',
+                type: 'text',
+                position: { x: 50, y: 400 },
+                size: { width: 600, height: 100 },
+                props: { children: 'This is a demo landing page showcasing our website builder capabilities.' },
+                styles: {}
+              }
+            ],
             metadata: {}
           },
           {
             id: 'demo-2', 
             title: 'Portfolio Website Demo',
             description: 'Personal portfolio showcasing your work',
-            status: 'deployed',
+            status: 'deployed' as const,
             user_id: 'demo-user',
             created_at: '2024-01-10T08:00:00Z',
             updated_at: '2024-01-18T16:45:00Z',
             deployment_url: 'https://example.com/demo-portfolio',
             preview_url: undefined,
-            elements: [],
+            elements: [
+              {
+                id: 'header-1',
+                type: 'header',
+                position: { x: 50, y: 50 },
+                size: { width: 700, height: 80 },
+                props: { title: 'My Portfolio' },
+                styles: {}
+              },
+              {
+                id: 'card-1',
+                type: 'card',
+                position: { x: 50, y: 150 },
+                size: { width: 300, height: 200 },
+                props: { title: 'Project 1', content: 'A beautiful web application built with modern technologies.' },
+                styles: {}
+              },
+              {
+                id: 'card-2',
+                type: 'card',
+                position: { x: 400, y: 150 },
+                size: { width: 300, height: 200 },
+                props: { title: 'Project 2', content: 'Mobile-first responsive design for optimal user experience.' },
+                styles: {}
+              }
+            ],
             metadata: {}
           },
           {
             id: 'demo-3',
             title: 'E-commerce Store Demo',
             description: 'Online store for selling products', 
-            status: 'building',
+            status: 'building' as const,
             user_id: 'demo-user',
             created_at: '2024-01-05T12:00:00Z',
             updated_at: '2024-01-22T09:15:00Z',
             deployment_url: undefined,
             preview_url: undefined,
-            elements: [],
+            elements: [
+              {
+                id: 'navbar-1',
+                type: 'navbar',
+                position: { x: 50, y: 50 },
+                size: { width: 700, height: 60 },
+                props: {},
+                styles: {}
+              },
+              {
+                id: 'hero-2',
+                type: 'hero',
+                position: { x: 50, y: 130 },
+                size: { width: 700, height: 250 },
+                props: { title: 'Shop Our Products', subtitle: 'Discover amazing items at great prices' },
+                styles: {}
+              },
+              {
+                id: 'grid-1',
+                type: 'grid',
+                position: { x: 50, y: 400 },
+                size: { width: 700, height: 300 },
+                props: {},
+                styles: {}
+              }
+            ],
             metadata: {}
           }
         ];
@@ -216,6 +290,14 @@ export default function Dashboard() {
     }
   };
 
+  const handlePreviewProject = (project: Project) => {
+    setPreviewProject(project);
+    // Convert project elements to CanvasElement format if needed
+    const elements = project.elements || [];
+    setPreviewElements(elements);
+    setShowPreviewModal(true);
+  };
+
   const formatDate = (dateString: string) => {
     return new Intl.DateTimeFormat('en-US', {
       year: 'numeric',
@@ -276,6 +358,7 @@ export default function Dashboard() {
                 </svg>
               </div>
               <div className="ml-3">
+                
                 <p className="text-sm text-blue-700">
                   <strong>Demo Mode:</strong> Supabase is not configured. You&apos;re viewing demo projects.
                   <span className="underline font-medium cursor-pointer" onClick={() => window.open('https://supabase.com/docs/guides/getting-started', '_blank')}>
@@ -492,7 +575,10 @@ export default function Dashboard() {
                           <Edit className="w-4 h-4" />
                           <span className="hidden sm:inline">Edit</span>
                         </Link>
-                        <button className="flex items-center space-x-1 text-gray-600 hover:text-gray-700 text-sm font-medium">
+                        <button 
+                          onClick={() => handlePreviewProject(project)}
+                          className="flex items-center space-x-1 text-gray-600 hover:text-gray-700 text-sm font-medium"
+                        >
                           <Eye className="w-4 h-4" />
                           <span className="hidden sm:inline">Preview</span>
                         </button>
@@ -562,6 +648,20 @@ export default function Dashboard() {
           </div>
         </div>
       </main>
+
+      {/* Preview Modal */}
+      {showPreviewModal && previewProject && (
+        <CodePreviewModal
+          isOpen={showPreviewModal}
+          onClose={() => setShowPreviewModal(false)}
+          generatedCode={{
+            code: '<!-- Preview mode - no code generation needed -->',
+            type: 'html'
+          }}
+          elements={previewElements}
+          title={`Preview: ${previewProject.title}`}
+        />
+      )}
     </div>
   );
 }

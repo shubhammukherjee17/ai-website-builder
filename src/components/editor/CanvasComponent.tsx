@@ -1,8 +1,8 @@
 'use client';
 
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import { Trash2, Move, Copy } from 'lucide-react';
-import { CanvasElement, ComponentType } from '@/types';
+import { CanvasElement } from '@/types';
 
 interface CanvasComponentProps {
   element: CanvasElement;
@@ -21,6 +21,10 @@ export default function CanvasComponent({
   onUpdate,
   onDelete
 }: CanvasComponentProps) {
+  const elementRef = useRef<HTMLDivElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [isResizing, setIsResizing] = useState(false);
+
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (!isPreviewMode) {
@@ -28,9 +32,23 @@ export default function CanvasComponent({
     }
   };
 
-  const handleMouseDown = (e: React.MouseEvent) => {
-    if (isPreviewMode) return;
+  const handleDoubleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!isPreviewMode) {
+      onSelect();
+    }
+  };
 
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (isPreviewMode || !isSelected) return;
+
+    // Check if clicking on resize handle
+    const target = e.target as HTMLElement;
+    if (target.classList.contains('resize-handle')) {
+      return; // Let resize handler deal with it
+    }
+
+    setIsDragging(true);
     const startX = e.clientX - element.position.x;
     const startY = e.clientY - element.position.y;
 
@@ -44,6 +62,83 @@ export default function CanvasComponent({
     };
 
     const handleMouseUp = () => {
+      setIsDragging(false);
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+  };
+
+  const handleResizeStart = (e: React.MouseEvent, direction: string) => {
+    e.stopPropagation();
+    if (isPreviewMode) return;
+
+    setIsResizing(true);
+
+    const startX = e.clientX;
+    const startY = e.clientY;
+    const startWidth = element.size.width;
+    const startHeight = element.size.height;
+    const startLeft = element.position.x;
+    const startTop = element.position.y;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const deltaX = e.clientX - startX;
+      const deltaY = e.clientY - startY;
+
+      let newWidth = startWidth;
+      let newHeight = startHeight;
+      let newLeft = startLeft;
+      let newTop = startTop;
+
+      // Handle different resize directions
+      switch (direction) {
+        case 'se': // bottom-right
+          newWidth = Math.max(50, startWidth + deltaX);
+          newHeight = Math.max(50, startHeight + deltaY);
+          break;
+        case 'sw': // bottom-left
+          newWidth = Math.max(50, startWidth - deltaX);
+          newHeight = Math.max(50, startHeight + deltaY);
+          newLeft = startLeft + startWidth - newWidth;
+          break;
+        case 'ne': // top-right
+          newWidth = Math.max(50, startWidth + deltaX);
+          newHeight = Math.max(50, startHeight - deltaY);
+          newTop = startTop + startHeight - newHeight;
+          break;
+        case 'nw': // top-left
+          newWidth = Math.max(50, startWidth - deltaX);
+          newHeight = Math.max(50, startHeight - deltaY);
+          newLeft = startLeft + startWidth - newWidth;
+          newTop = startTop + startHeight - newHeight;
+          break;
+        case 'n': // top
+          newHeight = Math.max(50, startHeight - deltaY);
+          newTop = startTop + startHeight - newHeight;
+          break;
+        case 's': // bottom
+          newHeight = Math.max(50, startHeight + deltaY);
+          break;
+        case 'e': // right
+          newWidth = Math.max(50, startWidth + deltaX);
+          break;
+        case 'w': // left
+          newWidth = Math.max(50, startWidth - deltaX);
+          newLeft = startLeft + startWidth - newWidth;
+          break;
+      }
+
+      onUpdate({
+        position: { x: newLeft, y: newTop },
+        size: { width: newWidth, height: newHeight },
+      });
+    };
+
+    const handleMouseUp = () => {
+      setIsResizing(false);
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
     };
@@ -241,10 +336,14 @@ export default function CanvasComponent({
 
   return (
     <div
+      ref={elementRef}
       className={`
         absolute group
         ${isSelected && !isPreviewMode ? 'ring-2 ring-indigo-500 ring-opacity-50' : ''}
         ${!isPreviewMode ? 'hover:ring-2 hover:ring-indigo-300 hover:ring-opacity-50' : ''}
+        ${isSelected && !isPreviewMode ? 'cursor-move' : ''}
+        ${isDragging ? 'cursor-grabbing' : ''}
+        ${isResizing ? 'cursor-grabbing' : ''}
       `}
       style={{
         left: element.position.x,
@@ -252,17 +351,17 @@ export default function CanvasComponent({
         width: element.size.width,
         height: element.size.height,
         zIndex: isSelected ? 1000 : 1,
+        userSelect: isDragging || isResizing ? 'none' : 'auto',
       }}
-      onClick={handleClick}
+             onClick={handleClick}
+       onDoubleClick={handleDoubleClick}
+       onMouseDown={handleMouseDown}
     >
       {/* Selection controls */}
       {isSelected && !isPreviewMode && (
         <>
-          {/* Drag handle */}
-          <div
-            className="absolute -top-8 left-0 bg-indigo-600 text-white px-2 py-1 rounded text-xs font-medium cursor-move flex items-center space-x-1"
-            onMouseDown={handleMouseDown}
-          >
+          {/* Element type indicator */}
+          <div className="absolute -top-8 left-0 bg-indigo-600 text-white px-2 py-1 rounded text-xs font-medium flex items-center space-x-1">
             <Move className="w-3 h-3" />
             <span>{element.type}</span>
           </div>
@@ -292,10 +391,40 @@ export default function CanvasComponent({
           </div>
 
           {/* Resize handles */}
-          <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-indigo-600 cursor-se-resize" />
-          <div className="absolute -top-1 -right-1 w-3 h-3 bg-indigo-600 cursor-ne-resize" />
-          <div className="absolute -bottom-1 -left-1 w-3 h-3 bg-indigo-600 cursor-sw-resize" />
-          <div className="absolute -top-1 -left-1 w-3 h-3 bg-indigo-600 cursor-nw-resize" />
+          <div 
+            className="absolute -bottom-1 -right-1 w-3 h-3 bg-indigo-600 cursor-se-resize resize-handle" 
+            onMouseDown={(e) => handleResizeStart(e, 'se')}
+          />
+          <div 
+            className="absolute -top-1 -right-1 w-3 h-3 bg-indigo-600 cursor-ne-resize resize-handle" 
+            onMouseDown={(e) => handleResizeStart(e, 'ne')}
+          />
+          <div 
+            className="absolute -bottom-1 -left-1 w-3 h-3 bg-indigo-600 cursor-sw-resize resize-handle" 
+            onMouseDown={(e) => handleResizeStart(e, 'sw')}
+          />
+          <div 
+            className="absolute -top-1 -left-1 w-3 h-3 bg-indigo-600 cursor-nw-resize resize-handle" 
+            onMouseDown={(e) => handleResizeStart(e, 'nw')}
+          />
+          
+          {/* Edge resize handles */}
+          <div 
+            className="absolute top-1/2 -left-1 w-3 h-3 bg-indigo-600 cursor-w-resize resize-handle transform -translate-y-1/2" 
+            onMouseDown={(e) => handleResizeStart(e, 'w')}
+          />
+          <div 
+            className="absolute top-1/2 -right-1 w-3 h-3 bg-indigo-600 cursor-e-resize resize-handle transform -translate-y-1/2" 
+            onMouseDown={(e) => handleResizeStart(e, 'e')}
+          />
+          <div 
+            className="absolute -top-1 left-1/2 w-3 h-3 bg-indigo-600 cursor-n-resize resize-handle transform -translate-x-1/2" 
+            onMouseDown={(e) => handleResizeStart(e, 'n')}
+          />
+          <div 
+            className="absolute -bottom-1 left-1/2 w-3 h-3 bg-indigo-600 cursor-s-resize resize-handle transform -translate-x-1/2" 
+            onMouseDown={(e) => handleResizeStart(e, 's')}
+          />
         </>
       )}
 

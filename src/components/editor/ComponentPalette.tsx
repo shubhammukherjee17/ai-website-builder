@@ -36,12 +36,16 @@ function DraggableComponent({ item }: DraggableComponentProps) {
 
   const IconComponent = getIconForType(item.type);
 
+  // Filter out aria-describedby to prevent hydration issues
+  const { 'aria-describedby': ariaDescribedBy, ...safeAttributes } = attributes;
+
   return (
     <div
       ref={setNodeRef}
       style={style}
       {...listeners}
-      {...attributes}
+      {...safeAttributes}
+      suppressHydrationWarning
       className={`
         flex flex-col items-center p-3 bg-white border border-gray-200 rounded-lg cursor-grab 
         hover:border-indigo-300 hover:shadow-sm transition-all duration-200
