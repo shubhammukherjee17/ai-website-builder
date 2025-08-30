@@ -1,27 +1,11 @@
 import Link from "next/link";
-import { ArrowRight, Zap, Paintbrush, Code, Rocket } from "lucide-react";
+import { ArrowRight, Paintbrush, Code, Rocket } from "lucide-react";
+import Navigation from "@/components/layout/Navigation";
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      {/* Navigation */}
-      <nav className="flex items-center justify-between p-6 bg-white/80 backdrop-blur-sm border-b border-gray-200">
-        <div className="flex items-center space-x-2">
-          <Zap className="w-8 h-8 text-indigo-600" />
-          <span className="text-xl font-bold text-gray-900">AI Website Builder</span>
-        </div>
-        <div className="flex items-center space-x-4">
-          <Link href="/auth/login" className="text-gray-600 hover:text-gray-900">
-            Log In
-          </Link>
-          <Link 
-            href="/auth/signup" 
-            className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors"
-          >
-            Get Started
-          </Link>
-        </div>
-      </nav>
+      <Navigation />
 
       {/* Hero Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
@@ -104,5 +88,3 @@ export default function Home() {
     </div>
   );
 }
-//   );
-// }

@@ -220,13 +220,16 @@ export default function EditorPage({ params }: EditorPageProps) {
 
     setIsGenerating(true);
     try {
+      // Use project id, but handle 'new' case
+      const projectId = project?.id === 'new' ? 'demo-project' : (project?.id || resolvedParams.projectId);
+      
       const response = await fetch('/api/generate/code', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          projectId: resolvedParams.projectId,
+          projectId,
           elements,
           options: {
             framework: 'react',
@@ -237,18 +240,22 @@ export default function EditorPage({ params }: EditorPageProps) {
         }),
       });
 
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
       const result = await response.json();
 
-      if (result.success) {
-        setGeneratedCode(result.data);
+      if (result.success || result.data) {
+        setGeneratedCode(result.data || result);
         setShowCodeModal(true);
       } else {
         console.error('Code generation failed:', result.error);
-        alert('Code generation failed. Please try again.');
+        alert('Code generation failed: ' + (result.error || 'Unknown error'));
       }
     } catch (error) {
       console.error('Code generation error:', error);
-      alert('Code generation failed. Please try again.');
+      alert('Code generation failed: ' + (error.message || 'Network error'));
     } finally {
       setIsGenerating(false);
     }
@@ -460,7 +467,7 @@ export default function EditorPage({ params }: EditorPageProps) {
         <DndContext onDragEnd={handleDragEnd}>
           {/* Desktop Component Palette */}
           {!isPreviewMode && (
-            <div className="hidden lg:block">
+            <div className="hidden lg:block h-full">
               <ComponentPalette />
             </div>
           )}
@@ -490,7 +497,7 @@ export default function EditorPage({ params }: EditorPageProps) {
 
           {/* Desktop Property Panel */}
           {!isPreviewMode && (
-            <div className="hidden lg:block">
+            <div className="hidden lg:block h-full">
               <PropertyPanel
                 selectedElement={selectedElement}
                 onElementUpdate={handleElementUpdate}

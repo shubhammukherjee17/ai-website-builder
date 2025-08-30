@@ -233,7 +233,7 @@ const componentCategories = {
 
 export default function ComponentPalette() {
   return (
-    <div className="w-64 bg-white border-r border-gray-200 p-4 overflow-y-auto">
+    <div className="w-64 bg-white border-r border-gray-200 p-4 overflow-y-auto h-full">
       <h2 className="text-lg font-semibold text-gray-900 mb-6">Components</h2>
       
       {Object.entries(componentCategories).map(([category, items]) => (
